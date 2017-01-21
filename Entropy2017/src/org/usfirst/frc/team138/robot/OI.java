@@ -19,12 +19,12 @@ public class OI {
     Joystick driverStick = new Joystick(0);
     Joystick operatorStick = new Joystick(1);
     
-    static int CLIMB_BUTTON_NUMBER = 0;
+    /*static int CLIMB_BUTTON_NUMBER = 0;
     Button climbButton = new JoystickButton(operatorStick, CLIMB_BUTTON_NUMBER);
     
     public OI(){
     	climbButton.whileHeld(new Climb());
-    }
+    }*/
     
     // There are a few additional built in buttons you can use. Additionally,
     // by subclassing Button you can create custom triggers and bind those to
@@ -47,12 +47,12 @@ public class OI {
     
 	public double getMoveSpeed()
 	{
-		return driverStick.getRawAxis(0);
+		return driverStick.getRawAxis(1);
 	}
 	
 	public double getRotateSpeed()
 	{
-		return driverStick.getRawAxis(1);
+		return driverStick.getRawAxis(4);
 	}
 }
 

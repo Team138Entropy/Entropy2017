@@ -4,17 +4,35 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 import org.usfirst.frc.team138.robot.RobotMap;
+import edu.wpi.first.wpilibj.CANJaguar;
 
 public class Drivetrain extends Subsystem{
+	boolean USING_JAGUARS = true;
 
-	private static double CONTROLLER_DEAD_ZONE = 0.05;
+	private static double CONTROLLER_DEAD_ZONE = 0.09;
 	
-	RobotDrive drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
-			RobotMap.LEFT_MOTOR_CHANNEL_BACK,
-			RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
-			RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+	RobotDrive drivetrain;
 	
 	protected void initDefaultCommand() {
+		if (USING_JAGUARS)
+		{
+			CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+			CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+			CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+			CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+			
+		
+			drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
+					frontRightJaguar, backRightJaguar);
+		}
+		else
+		{
+			drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
+					RobotMap.LEFT_MOTOR_CHANNEL_BACK,
+					RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
+					RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		}
+		
 		setDefaultCommand(new TeleopDrive());
 	}
 	
@@ -33,7 +51,7 @@ public class Drivetrain extends Subsystem{
 		drivetrain.setLeftRightMotorOutputs(leftSpeed, rightSpeed);
 	}
 	
-	public void driveRobot(double moveSpeed, double rotateSpeed)
+	public void driveWithTable(double moveSpeed, double rotateSpeed)
 	{
 		// Filter input speeds
 		moveSpeed = applyDeadZone(moveSpeed);
@@ -52,10 +70,10 @@ public class Drivetrain extends Subsystem{
 
 		indices = getIndex(moveSpeed, rotateSpeed);
 			
-		if(rotateSpeed < 0)
+		/*if(rotateSpeed < 0)
 		{
 			indices[0] = 32 - indices[0];
-		}
+		}*/
 
 		return DriveTable.Drive_Matrix[indices[1]][indices[0]];
 	}
@@ -65,31 +83,26 @@ public class Drivetrain extends Subsystem{
 		int[] indices = {16, 16};
 
 		indices = getIndex(moveSpeed, rotateSpeed);
-			
-		if(rotateSpeed > 0)
-		{
-			indices[0] = 32 - indices[0];
-		}
+		indices[0] = 32 - indices[0];
 
 		return DriveTable.Drive_Matrix[indices[1]][indices[0]];
 	}
 	
 	int[] getIndex(double moveSpeed, double rotateSpeed)
-	{
+	{		
 		double diff1 = 0;
 		double diff2 = 0;
+		// [0] is x, [1] is y
 		int[] returnIndex = {0, 0};
 
 		double[] arrayPtr = DriveTable.Drive_Lookup_X;
 		int arrayLength = DriveTable.Drive_Lookup_X.length;
-		double minRotate = arrayPtr[0];
-		double maxRotate = arrayPtr[arrayLength-1];
 
-		double rotateValue = limitValue(rotateSpeed, minRotate, maxRotate);
+		double rotateValue = limitValue(rotateSpeed, arrayPtr[0], arrayPtr[arrayLength-1]);
 
 		for(int i = 0; i < arrayLength; i++) 
 		{
-			if(i+1 >= arrayLength || range(rotateValue, arrayPtr[i], arrayPtr[i+1]))
+			if(i+1 >= arrayLength || inRange(rotateValue, arrayPtr[i], arrayPtr[i+1]))
 			{
 				//Assume match found
 				if((i + 1) >= arrayLength)
@@ -116,11 +129,12 @@ public class Drivetrain extends Subsystem{
 		
 		arrayPtr = DriveTable.Drive_Lookup_Y;
 		arrayLength = DriveTable.Drive_Lookup_Y.length;
-		double moveValue = limitValue(moveSpeed, arrayPtr[arrayLength], arrayPtr[0]);
+		double moveValue = limitValue(moveSpeed, arrayPtr[0], arrayPtr[arrayLength - 1]);
+		System.out.println(moveSpeed + " " + moveValue);
 
 		for( int i = 0; i < arrayLength; i++) 
 		{
-			if(i+1 >= arrayLength || range(moveValue, arrayPtr[i], arrayPtr[i+1]))
+			if(i+1 >= arrayLength || inRange(moveValue, arrayPtr[i], arrayPtr[i+1]))
 			{
 				//Assume match found
 				if((i + 1) >= arrayLength)
@@ -148,7 +162,7 @@ public class Drivetrain extends Subsystem{
 		return returnIndex;
 	}
 	
-	boolean range(double testValue, double bound1, double bound2) 
+	boolean inRange(double testValue, double bound1, double bound2) 
 	{  
 		return (((bound1 <= testValue) && (testValue <= bound2)) ||
 				((bound1 >= testValue) && (testValue >= bound2)));
