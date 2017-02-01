@@ -4,34 +4,27 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 import org.usfirst.frc.team138.robot.RobotMap;
-import edu.wpi.first.wpilibj.CANJaguar;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class Drivetrain extends Subsystem{
-	boolean USING_JAGUARS = true;
-
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
 	
 	RobotDrive drivetrain;
 	
+	public Encoder leftEncoder;
+	public Encoder rightEncoder;
+	
 	protected void initDefaultCommand() {
-		if (USING_JAGUARS)
-		{
-			CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-			CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-			CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-			CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
-			
+		drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
+				RobotMap.LEFT_MOTOR_CHANNEL_BACK,
+				RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
+				RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
-			drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
-					frontRightJaguar, backRightJaguar);
-		}
-		else
-		{
-			drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
-					RobotMap.LEFT_MOTOR_CHANNEL_BACK,
-					RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
-					RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
-		}
+		leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
+		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
+    	leftEncoder.setDistancePerPulse(0.1);
+    	rightEncoder.setDistancePerPulse(0.1);
+    	resetEncoders();
 		
 		setDefaultCommand(new TeleopDrive());
 	}
@@ -45,12 +38,7 @@ public class Drivetrain extends Subsystem{
 	{
 		drivetrain.tankDrive(leftSpeed, rightSpeed);
 	}
-	
-	public void autoDrive(double leftSpeed, double rightSpeed) 
-	{
-		drivetrain.setLeftRightMotorOutputs(leftSpeed, rightSpeed);
-	}
-	
+		
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
 	{
 		// Filter input speeds
@@ -167,7 +155,6 @@ public class Drivetrain extends Subsystem{
 		return (((bound1 <= testValue) && (testValue <= bound2)) ||
 				((bound1 >= testValue) && (testValue >= bound2)));
 	}
-
 	
 	double limitValue(double testValue, double lowerBound, double upperBound)
 	{
@@ -196,5 +183,18 @@ public class Drivetrain extends Subsystem{
 			finalSpeed = speed;
 		}
 		return finalSpeed;
+	}
+	
+	public double leftEncoderGet() {
+		return leftEncoder.getDistance();
+	}
+	
+	public double rightEncoderGet() {
+		return rightEncoder.getDistance();
+	}
+	
+	public void resetEncoders() {
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 }
