@@ -11,12 +11,14 @@ public class AutoDrive extends Command implements PIDOutput{
 	boolean isDone = false;
 	PIDController turnController;
 	double rotateToAngleRate = 0.0;
-	double distance;
-	double difference;
 	double lastRightDistance = 0.0;
 	double lastLeftDistance = 0.0;
 	int stallCounter = 0;
 	boolean areMotorsStalled = false;
+	boolean rotateInPlace;
+	double driveSpeed = 0.0;
+	double driveDistance = 0.0;
+	double targetAngle = 0.0;
 	
 	//************************************************
 	//PID CONSTANTS
@@ -25,14 +27,12 @@ public class AutoDrive extends Command implements PIDOutput{
 	//.03 turning
 	//.15 drive straighting
 
-	static double kP = .03;
+	static double kPRotate = 0.0075;
+	static double kPDrive = 0.06;
 	static double kI = 0.0;
 	static double kD = 0.0;
 
 	//*******************************************
-
-	double driveSpeed = 0.0;
-	double driveDistance = 0.0;
 	
 	//Degree Tolerance
 	//within how many degrees will you be capable of turning
@@ -41,15 +41,14 @@ public class AutoDrive extends Command implements PIDOutput{
 	//Drive Stright, for some power and some distance
 	public AutoDrive(double speedArg, double distanceArg){
 		requires(Robot.drivetrain);
-		double angle = Robot.gyro.getAngle();
-		double desiredAngleToHold = angle;
+		rotateInPlace = false;
 		driveSpeed = speedArg;
 		driveDistance = distanceArg;
-		turnController = new PIDController(kP, kI, kD, Robot.gyro, this);
+		turnController = new PIDController(kPDrive, kI, kD, Robot.gyro, this);
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
 		turnController.setInputRange(-360.0,  360.0);
 	    turnController.setOutputRange(-1.0, 1);
-		turnController.setSetpoint(desiredAngleToHold);
+		turnController.setSetpoint(Robot.gyro.getAngle());
 	    turnController.setContinuous(true);
 	    turnController.enable();
 	}
@@ -57,7 +56,9 @@ public class AutoDrive extends Command implements PIDOutput{
 	//rotates to an angle
 	public AutoDrive(double angle){
 		requires(Robot.drivetrain);
-		turnController = new PIDController(kP, kI, kD, Robot.gyro, this);
+		rotateInPlace = true;
+		targetAngle = angle;
+		turnController = new PIDController(kPRotate, kI, kD, Robot.gyro, this);
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
 		turnController.setInputRange(-360.0,  360.0);
 	    turnController.setOutputRange(-1.0, 1);
@@ -76,26 +77,25 @@ public class AutoDrive extends Command implements PIDOutput{
 		}
 		else
 		{
-			if ((Math.abs(Robot.drivetrain.leftEncoderGet()) + Math.abs(Robot.drivetrain.rightEncoderGet())) / 2 >= distance )
+			boolean done;
+			if (rotateInPlace)
+			{
+				done = Robot.gyro.getAngle() >= targetAngle;
+			}
+			else
+			{
+				done = (Math.abs(Robot.drivetrain.leftEncoderGet()) + Math.abs(Robot.drivetrain.rightEncoderGet())) / 2 >= driveDistance;
+			}
+			if (done)
 			{
 				Robot.drivetrain.drive(0.0, 0.0);
 				Robot.drivetrain.resetEncoders();
-			
-				SmartDashboard.putNumber("Left Encoder:", Robot.drivetrain.leftEncoderGet());
-				SmartDashboard.putNumber("Right Encoder:", Robot.drivetrain.rightEncoderGet());
-			
+				System.out.println("Angle: " + Robot.gyro.getAngle());
 				isDone = true;
 			}		
 			else
 			{
 				Robot.drivetrain.driveWithTable(driveSpeed, rotateToAngleRate);
-			
-				//get lowest Encoder Values
-				if( Math.abs(Robot.drivetrain.leftEncoderGet()) < Math.abs(Robot.drivetrain.rightEncoderGet())){
-					difference = Math.abs(Robot.drivetrain.leftEncoderGet());
-				} else {
-					difference = Math.abs(Robot.drivetrain.rightEncoderGet());
-				}		
 				
 				if (lastRightDistance == Robot.drivetrain.rightEncoderGet() || lastLeftDistance == Robot.drivetrain.leftEncoderGet()) 
 				{
@@ -108,14 +108,16 @@ public class AutoDrive extends Command implements PIDOutput{
 				else
 				{
 					stallCounter = 0;
-				}
-				
+				}	
 				lastRightDistance = Robot.drivetrain.rightEncoderGet();
 				lastLeftDistance = Robot.drivetrain.leftEncoderGet();
 				
 				SmartDashboard.putNumber("Distance", (Math.abs(Robot.drivetrain.leftEncoderGet()) + Math.abs(Robot.drivetrain.rightEncoderGet())) / 2);
 				SmartDashboard.putNumber("Left Encoder:", Robot.drivetrain.leftEncoderGet());
 				SmartDashboard.putNumber("Right Encoder:", Robot.drivetrain.rightEncoderGet());
+				SmartDashboard.putNumber("Rotate to Angle Rate", rotateToAngleRate);
+				System.out.println("Rate: " + rotateToAngleRate);
+				System.out.println("Angle: " + Robot.gyro.getAngle());
 			}
 		}
 	}
@@ -131,7 +133,33 @@ public class AutoDrive extends Command implements PIDOutput{
 	}
 
 	public void pidWrite(double output) {
-		rotateToAngleRate = output;		
+		if (rotateInPlace)
+		{
+			double minSpeed = 0.27;
+			if (output > minSpeed|| output < -minSpeed)
+			{
+				rotateToAngleRate = output;
+			}
+			else if (targetAngle > 0)
+			{
+				rotateToAngleRate = minSpeed;
+			}
+			else
+			{
+				rotateToAngleRate = -minSpeed;
+			}
+		}
+		else
+		{
+			if (driveSpeed > 0)
+			{
+				rotateToAngleRate = -1 * output;
+			}
+			else
+			{
+				rotateToAngleRate = output;
+			}
+		}		
 	}
-
+	
 }

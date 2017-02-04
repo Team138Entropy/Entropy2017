@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 import org.usfirst.frc.team138.robot.RobotMap;
+
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class Drivetrain extends Subsystem{
@@ -15,10 +17,18 @@ public class Drivetrain extends Subsystem{
 	public Encoder rightEncoder;
 	
 	protected void initDefaultCommand() {
-		drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
-				RobotMap.LEFT_MOTOR_CHANNEL_BACK,
-				RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
-				RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+//		drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
+//				RobotMap.LEFT_MOTOR_CHANNEL_BACK,
+//				RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
+//				RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		
+		CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+	
+		drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
+				frontRightJaguar, backRightJaguar);
 		
 		leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
 		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
@@ -118,7 +128,6 @@ public class Drivetrain extends Subsystem{
 		arrayPtr = DriveTable.Drive_Lookup_Y;
 		arrayLength = DriveTable.Drive_Lookup_Y.length;
 		double moveValue = limitValue(moveSpeed, arrayPtr[0], arrayPtr[arrayLength - 1]);
-		System.out.println(moveSpeed + " " + moveValue);
 
 		for( int i = 0; i < arrayLength; i++) 
 		{

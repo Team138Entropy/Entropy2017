@@ -21,8 +21,8 @@ public class RobotMap {
 	public final static int RIGHT_MOTOR_CHANNEL_FRONT = 4;
 	public final static int RIGHT_MOTOR_CHANNEL_BACK = 5;
 	
-	public final static int LEFT_ENCODER_PORT_A = 0;
-	public final static int LEFT_ENCODER_PORT_B = 1;
-	public final static int RIGHT_ENCODER_PORT_A = 3;
-	public final static int RIGHT_ENCODER_PORT_B = 2;
+	public final static int LEFT_ENCODER_PORT_A = 1;
+	public final static int LEFT_ENCODER_PORT_B = 2;
+	public final static int RIGHT_ENCODER_PORT_A = 4;
+	public final static int RIGHT_ENCODER_PORT_B = 3;
 }
