@@ -13,9 +13,6 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
-	public Encoder leftEncoder;
-	public Encoder rightEncoder;
-	
 	protected void initDefaultCommand() {
 //		drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
 //				RobotMap.LEFT_MOTOR_CHANNEL_BACK,
@@ -29,12 +26,6 @@ public class Drivetrain extends Subsystem{
 	
 		drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
 				frontRightJaguar, backRightJaguar);
-		
-		leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
-		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
-    	leftEncoder.setDistancePerPulse(0.1);
-    	rightEncoder.setDistancePerPulse(0.1);
-    	resetEncoders();
 		
 		setDefaultCommand(new TeleopDrive());
 	}
@@ -192,18 +183,5 @@ public class Drivetrain extends Subsystem{
 			finalSpeed = speed;
 		}
 		return finalSpeed;
-	}
-	
-	public double leftEncoderGet() {
-		return leftEncoder.getDistance();
-	}
-	
-	public double rightEncoderGet() {
-		return rightEncoder.getDistance();
-	}
-	
-	public void resetEncoders() {
-		leftEncoder.reset();
-		rightEncoder.reset();
 	}
 }

@@ -2,6 +2,8 @@ package org.usfirst.frc.team138.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team138.robot.Robot;
+import org.usfirst.frc.team138.robot.subsystems.Sensors;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
@@ -44,11 +46,11 @@ public class AutoDrive extends Command implements PIDOutput{
 		rotateInPlace = false;
 		driveSpeed = speedArg;
 		driveDistance = distanceArg;
-		turnController = new PIDController(kPDrive, kI, kD, Robot.gyro, this);
+		turnController = new PIDController(kPDrive, kI, kD, Sensors.gyro, this);
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
 		turnController.setInputRange(-360.0,  360.0);
 	    turnController.setOutputRange(-1.0, 1);
-		turnController.setSetpoint(Robot.gyro.getAngle());
+		turnController.setSetpoint(Sensors.gyro.getAngle());
 	    turnController.setContinuous(true);
 	    turnController.enable();
 	}
@@ -58,7 +60,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		requires(Robot.drivetrain);
 		rotateInPlace = true;
 		targetAngle = angle;
-		turnController = new PIDController(kPRotate, kI, kD, Robot.gyro, this);
+		turnController = new PIDController(kPRotate, kI, kD, Sensors.gyro, this);
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
 		turnController.setInputRange(-360.0,  360.0);
 	    turnController.setOutputRange(-1.0, 1);
@@ -80,24 +82,24 @@ public class AutoDrive extends Command implements PIDOutput{
 			boolean done;
 			if (rotateInPlace)
 			{
-				done = Robot.gyro.getAngle() >= targetAngle;
+				done = Sensors.gyro.getAngle() >= targetAngle;
 			}
 			else
 			{
-				done = (Math.abs(Robot.drivetrain.leftEncoderGet()) + Math.abs(Robot.drivetrain.rightEncoderGet())) / 2 >= driveDistance;
+				done = (Math.abs(Sensors.getLeftDistance()) + Math.abs(Sensors.getRightDistance())) / 2 >= driveDistance;
 			}
 			if (done)
 			{
 				Robot.drivetrain.drive(0.0, 0.0);
-				Robot.drivetrain.resetEncoders();
-				System.out.println("Angle: " + Robot.gyro.getAngle());
+				Sensors.resetEncoders();
+				System.out.println("Angle: " + Sensors.gyro.getAngle());
 				isDone = true;
 			}		
 			else
 			{
 				Robot.drivetrain.driveWithTable(driveSpeed, rotateToAngleRate);
 				
-				if (lastRightDistance == Robot.drivetrain.rightEncoderGet() || lastLeftDistance == Robot.drivetrain.leftEncoderGet()) 
+				if (lastRightDistance == Sensors.getRightDistance() || lastLeftDistance == Sensors.getLeftDistance()) 
 				{
 					if (stallCounter == 75) 
 					{
@@ -109,15 +111,15 @@ public class AutoDrive extends Command implements PIDOutput{
 				{
 					stallCounter = 0;
 				}	
-				lastRightDistance = Robot.drivetrain.rightEncoderGet();
-				lastLeftDistance = Robot.drivetrain.leftEncoderGet();
+				lastRightDistance = Sensors.getRightDistance();
+				lastLeftDistance = Sensors.getLeftDistance();
 				
-				SmartDashboard.putNumber("Distance", (Math.abs(Robot.drivetrain.leftEncoderGet()) + Math.abs(Robot.drivetrain.rightEncoderGet())) / 2);
-				SmartDashboard.putNumber("Left Encoder:", Robot.drivetrain.leftEncoderGet());
-				SmartDashboard.putNumber("Right Encoder:", Robot.drivetrain.rightEncoderGet());
+				SmartDashboard.putNumber("Distance", (Math.abs(Sensors.getLeftDistance()) + Math.abs(Sensors.getRightDistance())) / 2);
+				SmartDashboard.putNumber("Left Encoder:", Sensors.getLeftDistance());
+				SmartDashboard.putNumber("Right Encoder:", Sensors.getRightDistance());
 				SmartDashboard.putNumber("Rotate to Angle Rate", rotateToAngleRate);
 				System.out.println("Rate: " + rotateToAngleRate);
-				System.out.println("Angle: " + Robot.gyro.getAngle());
+				System.out.println("Angle: " + Sensors.gyro.getAngle());
 			}
 		}
 	}

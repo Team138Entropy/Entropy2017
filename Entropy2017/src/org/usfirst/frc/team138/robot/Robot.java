@@ -21,11 +21,14 @@ public class Robot extends IterativeRobot {
 
 	// Interface
 	public static OI oi;
-    SendableChooser chooser;
+	public static Sensors sensors;
+    SendableChooser<Command> chooser;
     
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
+    public static final Claw claw = new Claw();
+    public static final Wrist wrist = new Wrist();
     
     // Commands
     Command autonomousCommand;
@@ -37,7 +40,8 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	// Interface
 		oi = new OI();
-        chooser = new SendableChooser();
+		sensors = new Sensors();
+        chooser = new SendableChooser<Command>();
         SmartDashboard.putData("Auto mode", chooser);
     }
 	

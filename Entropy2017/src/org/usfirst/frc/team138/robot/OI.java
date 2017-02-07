@@ -1,10 +1,10 @@
 package org.usfirst.frc.team138.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.buttons.Button;
-//import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 //import edu.wpi.first.wpilibj.command.Command;
-//import org.usfirst.frc.team138.robot.commands.*;
+import org.usfirst.frc.team138.robot.commands.*;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -18,12 +18,16 @@ public class OI {
     Joystick driverStick = new Joystick(0);
     Joystick operatorStick = new Joystick(1);
     
-    /*static int CLIMB_BUTTON_NUMBER = 0;
-    Button climbButton = new JoystickButton(operatorStick, CLIMB_BUTTON_NUMBER);
+    Button floorGearAcqButton = new JoystickButton(driverStick, 3);
+    Button loadStnGearAcqButton = new JoystickButton(driverStick, 2);
+    
+    //Button climbButton = new JoystickButton(operatorStick, CLIMB_BUTTON_NUMBER);
     
     public OI(){
-    	climbButton.whileHeld(new Climb());
-    }*/
+    	floorGearAcqButton.whenPressed(new FloorGearAcquire());
+    	loadStnGearAcqButton.whenPressed(new LoadStationGearAcquire());
+    	//climbButton.whileHeld(new Climb());
+    }
     
     // There are a few additional built in buttons you can use. Additionally,
     // by subclassing Button you can create custom triggers and bind those to

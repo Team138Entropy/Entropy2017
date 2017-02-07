@@ -6,24 +6,21 @@ public class Claw extends Subsystem{
 	
 	// Define Claw Parts Here
 	//
+	
+	boolean isOpen = false;
 
 	protected void initDefaultCommand() {
 	}
 	
 	public void acquireGear(){
-		
+		isOpen = false;
 	}
 	
 	public void releaseGear(){
-		
+		isOpen = true;
 	}
 	
-	public void raiseClaw(){
-		
+	public boolean isOpen() {
+		return isOpen;
 	}
-	
-	public void lowerClaw(){
-		
-	}
-
 }
