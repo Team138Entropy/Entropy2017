@@ -20,7 +20,6 @@ public class OI {
     
     Button floorGearAcqButton = new JoystickButton(driverStick, 3);
     Button loadStnGearAcqButton = new JoystickButton(driverStick, 2);
-    
     //Button climbButton = new JoystickButton(operatorStick, CLIMB_BUTTON_NUMBER);
     
     public OI(){
