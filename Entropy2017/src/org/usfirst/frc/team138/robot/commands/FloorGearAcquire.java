@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class FloorGearAcquire extends CommandGroup {
 
 	public FloorGearAcquire(){
-		addParallel(new SetClawPosition(false));
-		addParallel(new SetWristPosition(false));
+		addSequential(new SetWristPosition(false));
+		addSequential(new SetClawPosition(false));
 	}
 }

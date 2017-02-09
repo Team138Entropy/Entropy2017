@@ -9,20 +9,27 @@ public class SetWristPosition extends Command {
 	boolean isUp;
 	
 	public SetWristPosition(boolean flipUp){
-		requires(Robot.wrist);
+		requires(Robot.claw);
 		isUp = flipUp;
 	}
+	
+	public SetWristPosition(){
+		requires(Robot.claw);
+		isUp = !Robot.claw.wristIsUp();
+	}
 
-	protected void initialize() {
-		if (isUp == Robot.wrist.isUp()) {
-			setTimeout(0.0);
-		} else if (isUp)
-		{
-			Robot.wrist.setUp();
-			setTimeout(0.3);
-		} else {
-			Robot.wrist.setDown();
-			setTimeout(0.0);
+	protected void initialize() {		
+		if (!isUp == Robot.claw.wristIsUp() && !Robot.claw.clawIsOpen()) {
+			if (!Robot.claw.guardIsUp()){
+				Robot.claw.guardUp();
+			}
+			if (isUp) {
+				Robot.claw.wristUp();
+				setTimeout(0.3);
+			} else {
+				Robot.claw.wristDown();
+				setTimeout(0.0);
+			}
 		}
 	}
 

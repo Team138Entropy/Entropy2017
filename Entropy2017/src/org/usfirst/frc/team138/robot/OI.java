@@ -20,11 +20,20 @@ public class OI {
     
     Button floorGearAcqButton = new JoystickButton(driverStick, 3);
     Button loadStnGearAcqButton = new JoystickButton(driverStick, 2);
-    //Button climbButton = new JoystickButton(operatorStick, CLIMB_BUTTON_NUMBER);
+    
+    Button toggleGearRamButton = new JoystickButton(operatorStick, 1);
+    Button toggleChuteGuardButton = new JoystickButton(operatorStick, 4);
+    Button toggleWristButton = new JoystickButton(operatorStick, 5);
+    Button toggleClawButton = new JoystickButton(operatorStick, 6);
+    //Button climbButton = new JoystickButton(operatorStick, some button);
     
     public OI(){
     	floorGearAcqButton.whenPressed(new FloorGearAcquire());
     	loadStnGearAcqButton.whenPressed(new LoadStationGearAcquire());
+    	toggleGearRamButton.whenPressed(new PushGear());
+    	toggleChuteGuardButton.whenPressed(new SetGuardPosition());
+    	toggleWristButton.whenPressed(new SetWristPosition());
+    	toggleClawButton.whenPressed(new SetClawPosition());
     	//climbButton.whileHeld(new Climb());
     }
     

@@ -12,16 +12,21 @@ public class SetClawPosition extends Command {
 		requires(Robot.claw);
 		isOpen = open;
 	}
+	
+	public SetClawPosition(){
+		requires(Robot.claw);
+		isOpen = !Robot.claw.clawIsOpen();
+	}
 
 	protected void initialize() {
-		if (isOpen == Robot.claw.isOpen()) {
+		if (isOpen == Robot.claw.clawIsOpen()) {
 			setTimeout(0.0);
 		} else if (isOpen){
-			Robot.claw.acquireGear();
-			setTimeout(0.25);
-		} else {
-			Robot.claw.releaseGear();
+			Robot.claw.openClaw();
 			setTimeout(0.0);
+		} else {
+			Robot.claw.closeClaw();
+			setTimeout(0.25);
 		}
 	}
 
