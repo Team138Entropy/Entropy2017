@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team138.robot.subsystems.*;
-//import org.usfirst.frc.team138.robot.commands.*;
+import org.usfirst.frc.team138.robot.commands.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,7 +22,9 @@ public class Robot extends IterativeRobot {
 	// Interface
 	public static OI oi;
 	public static Sensors sensors;
-    SendableChooser<Command> chooser;
+    SendableChooser<String> teamChooser;
+    SendableChooser<String> startPosChooser;
+    SendableChooser<String> autoModeChooser;
     
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
@@ -30,7 +32,7 @@ public class Robot extends IterativeRobot {
     public static final Claw claw = new Claw();
     
     // Commands
-    Command autonomousCommand;
+    AutonomousCommand autonomousCommand;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -40,8 +42,28 @@ public class Robot extends IterativeRobot {
     	// Interface
 		oi = new OI();
 		sensors = new Sensors();
-        chooser = new SendableChooser<Command>();
-        SmartDashboard.putData("Auto mode", chooser);
+		
+		SmartDashboard.putData(Scheduler.getInstance());
+		
+		//
+		teamChooser = new SendableChooser<String>();
+		teamChooser.addDefault("Red Alliance", "red");
+		teamChooser.addObject("Blue Alliance", "blue");
+		SmartDashboard.putData("Team:", teamChooser);
+		
+		startPosChooser = new SendableChooser<String>();
+		startPosChooser.addObject("Left", "left");
+		startPosChooser.addDefault("Middle", "middle");
+		startPosChooser.addObject("Right", "right");
+		SmartDashboard.putData("Starting Position:", startPosChooser);
+		
+		autoModeChooser = new SendableChooser<String>();
+		autoModeChooser.addDefault("Cross Line", "line");
+		autoModeChooser.addObject("Place Gear", "gear");
+		autoModeChooser.addObject("Place Gear and Shoot High", "gearAndShoot");
+		autoModeChooser.addObject("Place Gear and Release Hopper", "gearAndHopper");
+		SmartDashboard.putData("Auto Mode:", autoModeChooser);
+        
     }
 	
 	/**
@@ -67,21 +89,10 @@ public class Robot extends IterativeRobot {
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
     public void autonomousInit() {
-        autonomousCommand = (Command) chooser.getSelected();
-        
-		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
-			break;
-		case "Default Auto":
-		default:
-			autonomousCommand = new ExampleCommand();
-			break;
-		} */
-    	
-    	// schedule the autonomous command (example)
-        if (autonomousCommand != null) autonomousCommand.start();
+        autonomousCommand = new AutonomousCommand(teamChooser.getSelected(), 
+        		startPosChooser.getSelected(),
+        		autoModeChooser.getSelected());
+        autonomousCommand.start();
     }
 
     /**
@@ -92,11 +103,7 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to 
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        if (autonomousCommand != null) autonomousCommand.cancel();
+        autonomousCommand.cancel();
     }
 
     /**
