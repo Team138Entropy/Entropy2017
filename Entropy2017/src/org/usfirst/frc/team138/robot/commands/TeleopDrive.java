@@ -14,7 +14,7 @@ public class TeleopDrive extends Command{
 	}
 
 	protected void execute() {
-		Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
+		Robot.drivetrain.drive(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
 	}
 
 	protected boolean isFinished() {

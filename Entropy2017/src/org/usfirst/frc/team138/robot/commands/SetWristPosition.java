@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetWristPosition extends Command {
 
 	boolean isUp;
+	boolean toggleMode = false;
 	
 	public SetWristPosition(boolean flipUp){
 		requires(Robot.claw);
@@ -15,10 +16,14 @@ public class SetWristPosition extends Command {
 	
 	public SetWristPosition(){
 		requires(Robot.claw);
-		isUp = !Robot.claw.wristIsUp();
+		toggleMode = true;
 	}
 
 	protected void initialize() {		
+		if (toggleMode)
+		{
+			isUp = !Robot.claw.wristIsUp();
+		}
 		if (!isUp == Robot.claw.wristIsUp() && !Robot.claw.clawIsOpen()) {
 			if (!Robot.claw.guardIsUp()){
 				Robot.claw.guardUp();

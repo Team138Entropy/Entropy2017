@@ -2,7 +2,12 @@ package org.usfirst.frc.team138.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.TalonSRX;
+
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
+
+import com.ctre.CANTalon;
+
 import org.usfirst.frc.team138.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.CANJaguar;
@@ -13,19 +18,22 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
-	protected void initDefaultCommand() {
-//		drivetrain = new RobotDrive(RobotMap.LEFT_MOTOR_CHANNEL_FRONT, 
-//				RobotMap.LEFT_MOTOR_CHANNEL_BACK,
-//				RobotMap.RIGHT_MOTOR_CHANNEL_FRONT, 
-//				RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+	protected void initDefaultCommand() {		
+		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
-		CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-		CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-		CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-		CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
-	
-		drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
-				frontRightJaguar, backRightJaguar);
+		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
+				frontRightTalon, backRightTalon);
+		
+//		CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+//		CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+//		CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+//		CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+//	
+//		drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
+//				frontRightJaguar, backRightJaguar);
 		
 		setDefaultCommand(new TeleopDrive());
 	}
@@ -58,11 +66,6 @@ public class Drivetrain extends Subsystem{
 		int[] indices = {16, 16};
 
 		indices = getIndex(moveSpeed, rotateSpeed);
-			
-		/*if(rotateSpeed < 0)
-		{
-			indices[0] = 32 - indices[0];
-		}*/
 
 		return DriveTable.Drive_Matrix[indices[1]][indices[0]];
 	}

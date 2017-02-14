@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetGuardPosition extends Command {
 
 	boolean isUp;
+	boolean toggleMode = false;
 	
 	public SetGuardPosition(boolean up){
 		requires(Robot.claw);
@@ -14,10 +15,14 @@ public class SetGuardPosition extends Command {
 	
 	public SetGuardPosition(){
 		requires(Robot.claw);
-		isUp = !Robot.claw.guardIsUp();
+		toggleMode = true;
 	}
 
 	protected void initialize() {
+		if (toggleMode)
+		{
+			isUp = !Robot.claw.guardIsUp();
+		}
 		if (!isUp == Robot.claw.guardIsUp() && Robot.claw.wristIsUp()) {
 			if (isUp){
 				Robot.claw.guardUp();

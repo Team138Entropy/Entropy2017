@@ -2,7 +2,7 @@ package org.usfirst.frc.team138.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team138.robot.Robot;
-import org.usfirst.frc.team138.robot.subsystems.Sensors;
+import org.usfirst.frc.team138.robot.Sensors;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PIDController;

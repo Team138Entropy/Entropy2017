@@ -1,6 +1,6 @@
-
 package org.usfirst.frc.team138.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -21,11 +21,10 @@ public class Robot extends IterativeRobot {
 
 	// Interface
 	public static OI oi;
-	public static Sensors sensors;
     SendableChooser<String> teamChooser;
     SendableChooser<String> startPosChooser;
     SendableChooser<String> autoModeChooser;
-    
+        
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
@@ -41,7 +40,8 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	// Interface
 		oi = new OI();
-		sensors = new Sensors();
+		Sensors.initialize();
+		Sensors.updateSmartDashboard();
 		
 		SmartDashboard.putData(Scheduler.getInstance());
 		
@@ -62,8 +62,11 @@ public class Robot extends IterativeRobot {
 		autoModeChooser.addObject("Place Gear", "gear");
 		autoModeChooser.addObject("Place Gear and Shoot High", "gearAndShoot");
 		autoModeChooser.addObject("Place Gear and Release Hopper", "gearAndHopper");
+		autoModeChooser.addObject("Test" , "test");
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
-        
+		
+	
+		CameraServer.getInstance().startAutomaticCapture().setResolution(340, 240);
     }
 	
 	/**
@@ -100,10 +103,13 @@ public class Robot extends IterativeRobot {
      */
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
+        Sensors.updateSmartDashboard();
     }
 
     public void teleopInit() {
-        autonomousCommand.cancel();
+        if (autonomousCommand != null) {
+        	autonomousCommand.cancel();
+        }
     }
 
     /**
@@ -111,6 +117,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
+        Sensors.updateSmartDashboard();
     }
     
     /**

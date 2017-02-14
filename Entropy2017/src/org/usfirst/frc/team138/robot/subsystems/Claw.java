@@ -1,12 +1,15 @@
 package org.usfirst.frc.team138.robot.subsystems;
 
 import org.usfirst.frc.team138.robot.RobotMap;
+
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Claw extends Subsystem{
 	
 	// Define Claw Parts Here
+	Compressor compressor = new Compressor();
 	Solenoid gripperSolenoid = new Solenoid(RobotMap.GEAR_GRIPPER_PORT);
 	Solenoid wristSolenoid = new Solenoid(RobotMap.GEAR_WRIST_PORT);
 	Solenoid chuteGuardSolenoid = new Solenoid(RobotMap.GEAR_CHUTE_GUARD_PORT);

@@ -3,8 +3,11 @@ package org.usfirst.frc.team138.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team138.robot.OI;
 import org.usfirst.frc.team138.robot.Robot;
+import org.usfirst.frc.team138.robot.RobotMap;
 
 public class Climb extends Command{
+	
+	final double threshold = 0.5;
 	
 	public Climb(){
 		requires(Robot.climbingMechanism);
@@ -14,7 +17,18 @@ public class Climb extends Command{
 	}
 
 	protected void execute() {
-		Robot.climbingMechanism.startClimb();
+		if(Robot.oi.getClimbSpeed() > threshold)
+		{
+			Robot.climbingMechanism.setSpeed(RobotMap.ROPE_CLIMB_SPEED);
+		}
+		else if(Robot.oi.getClimbSpeed() < -threshold)
+		{
+			Robot.climbingMechanism.setSpeed(-RobotMap.ROPE_CLIMB_SPEED);
+		}
+		else
+		{
+			Robot.climbingMechanism.setSpeed(0.0);
+		}
 	}
 
 	protected boolean isFinished() {
@@ -22,10 +36,10 @@ public class Climb extends Command{
 	}
 
 	protected void end() {
+		Robot.climbingMechanism.setSpeed(0.0);
 	}
 
 	protected void interrupted() {
-		Robot.climbingMechanism.stopClimb();
 	}
 
 }

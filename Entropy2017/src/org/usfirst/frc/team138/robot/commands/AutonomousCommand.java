@@ -5,6 +5,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutonomousCommand extends CommandGroup {
 
 	public AutonomousCommand(String team, String startPos, String autoMode){
+		// Test Mode
+		if (autoMode == "test")
+		{
+			addSequential(new AutoDrive(90));
+		}
+		
 		// This auto mode crosses the line and that's it. This is the default
 		if (autoMode == "line")
 		{
@@ -19,7 +25,7 @@ public class AutonomousCommand extends CommandGroup {
 		}
 		
 		// This auto mode places the gear on the peg depending on the starting position
-		if (autoMode == "gear")
+		if (autoMode == "gear" || autoMode == "gearAndShoot" || autoMode == "gearAndHopper")
 		{
 			if (startPos == "left")
 			{

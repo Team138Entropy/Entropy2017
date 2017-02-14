@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetClawPosition extends Command {
 
 	boolean isOpen;
+	boolean toggleMode = false;
 	
 	public SetClawPosition(boolean open){
 		requires(Robot.claw);
@@ -15,10 +16,14 @@ public class SetClawPosition extends Command {
 	
 	public SetClawPosition(){
 		requires(Robot.claw);
-		isOpen = !Robot.claw.clawIsOpen();
+		toggleMode = true;
 	}
 
 	protected void initialize() {
+		if (toggleMode)
+		{
+			isOpen = !Robot.claw.clawIsOpen();
+		}
 		if (isOpen == Robot.claw.clawIsOpen()) {
 			setTimeout(0.0);
 		} else if (isOpen){
