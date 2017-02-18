@@ -25,10 +25,10 @@ public class RobotMap {
 	public final static double FUEL_SHOOT_SPEED = 0.8;
 	
 	// GPIO
-	public final static int LEFT_ENCODER_PORT_A = 1;
-	public final static int LEFT_ENCODER_PORT_B = 2;
-	public final static int RIGHT_ENCODER_PORT_A = 4;
-	public final static int RIGHT_ENCODER_PORT_B = 3;
+	public final static int LEFT_ENCODER_PORT_A = 0;
+	public final static int LEFT_ENCODER_PORT_B = 1;
+	public final static int RIGHT_ENCODER_PORT_A = 3;
+	public final static int RIGHT_ENCODER_PORT_B = 2;
 	public final static int GEAR_DETECTOR_PORT = 9;
 	
 	// Analog Input

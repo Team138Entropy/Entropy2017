@@ -48,6 +48,7 @@ public class Drivetrain extends Subsystem{
 		
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
 	{
+		moveSpeed = -moveSpeed;
 		// Filter input speeds
 		moveSpeed = applyDeadZone(moveSpeed);
 		rotateSpeed = applyDeadZone(rotateSpeed);
