@@ -2,8 +2,6 @@ package org.usfirst.frc.team138.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.TalonSRX;
-
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 
 import com.ctre.CANTalon;
@@ -67,7 +65,7 @@ public class Drivetrain extends Subsystem{
 
 		indices = getIndex(moveSpeed, rotateSpeed);
 
-		return DriveTable.Drive_Matrix[indices[1]][indices[0]];
+		return DriveTable.Drive_Matrix_2017[indices[1]][indices[0]];
 	}
 	
 	double getRightMotorSpeed(double moveSpeed, double rotateSpeed)
@@ -77,7 +75,7 @@ public class Drivetrain extends Subsystem{
 		indices = getIndex(moveSpeed, rotateSpeed);
 		indices[0] = 32 - indices[0];
 
-		return DriveTable.Drive_Matrix[indices[1]][indices[0]];
+		return DriveTable.Drive_Matrix_2017[indices[1]][indices[0]];
 	}
 	
 	int[] getIndex(double moveSpeed, double rotateSpeed)
