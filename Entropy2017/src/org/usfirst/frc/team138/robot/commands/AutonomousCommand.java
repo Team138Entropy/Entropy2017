@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutonomousCommand extends CommandGroup {
 
 	public AutonomousCommand(String team, String startPos, String autoMode){
+		// THE SPOKE IS UP
 		// Test Mode
 		if (autoMode == "test")
 		{
@@ -36,25 +37,30 @@ public class AutonomousCommand extends CommandGroup {
 		{
 			if (startPos == "left")
 			{
-				addSequential(new AutoDrive(0.5, 10));
-				addSequential(new AutoDrive(45));
-				addSequential(new AutoDrive(0.5, 10));
+				addSequential(new AutoDrive(-0.6, 96));
+				addSequential(new AutoDrive(30));
+				addSequential(new AutoDrive(-0.6, 7));
 				addSequential(new PushGear());
 				addSequential(new PushGear());
+				addSequential(new AutoDrive(0.6, 12));
 			}
 			if (startPos == "middle")
 			{
-				addSequential(new AutoDrive(0.5, 30));
+				addSequential(new AutoDrive(-0.7, 73));
+				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear());
 				addSequential(new PushGear());
+				addSequential(new AutoDrive(1.0, 15));
+				addSequential(new SetClawPosition(false));
 			}
 			if (startPos == "right")
 			{
-				addSequential(new AutoDrive(0.5, 10));
-				addSequential(new AutoDrive(-45));
-				addSequential(new AutoDrive(0.5, 10));
+				addSequential(new AutoDrive(-0.6, 86));
+				addSequential(new AutoDrive(-30));
+				addSequential(new AutoDrive(-0.6, 30));
 				addSequential(new PushGear());
 				addSequential(new PushGear());
+				addSequential(new AutoDrive(0.6, 12));
 			}
 			
 			// This mode then shoots fuel into the goal depending on team and start position

@@ -66,7 +66,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
 		
 	
-		//CameraServer.getInstance().startAutomaticCapture().setResolution(340, 240);
+		CameraServer.getInstance().startAutomaticCapture().setResolution(340, 240);
     }
 	
 	/**

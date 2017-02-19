@@ -28,7 +28,7 @@ public class SetClawPosition extends Command {
 			setTimeout(0.0);
 		} else if (isOpen){
 			Robot.claw.openClaw();
-			setTimeout(0.0);
+			setTimeout(0.2);
 		} else {
 			Robot.claw.closeClaw();
 			setTimeout(0.25);

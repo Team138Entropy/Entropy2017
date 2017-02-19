@@ -30,7 +30,7 @@ public class AutoDrive extends Command implements PIDOutput{
 	//.15 drive straighting
 
 	static double kPRotate = 0.01;
-	static double kPDrive = 0.13;
+	static double kPDrive = 0.2;
 	static double kI = 0.0;
 	static double kD = 0.0;
 
@@ -40,7 +40,7 @@ public class AutoDrive extends Command implements PIDOutput{
 	//within how many degrees will you be capable of turning
 	static double ToleranceDegrees = 1.0;
 	
-	//Drive Stright, for some power and some distance
+	//Drive Straight, for some power and some distance
 	public AutoDrive(double speedArg, double distanceArg){
 		requires(Robot.drivetrain);
 		rotateInPlace = false;
@@ -161,7 +161,7 @@ public class AutoDrive extends Command implements PIDOutput{
 			}
 			else
 			{
-				rotateToAngleRate = output;
+				rotateToAngleRate = -1 * output;
 			}
 		}		
 	}
