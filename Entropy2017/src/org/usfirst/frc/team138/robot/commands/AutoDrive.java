@@ -29,7 +29,7 @@ public class AutoDrive extends Command implements PIDOutput{
 	//.03 turning
 	//.15 drive straighting
 
-	static double kPRotate = 0.01;
+	static double kPRotate = 0.012;
 	static double kPDrive = 0.2;
 	static double kI = 0.0;
 	static double kD = 0.0;
@@ -47,8 +47,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		driveSpeed = speedArg;
 		driveDistance = distanceArg;
 		turnController = new PIDController(kPDrive, kI, kD, Sensors.gyro, this);
-		turnController.setAbsoluteTolerance(ToleranceDegrees);         
-		turnController.setInputRange(-360.0,  360.0);
+		turnController.setAbsoluteTolerance(ToleranceDegrees);
 	    turnController.setOutputRange(-1.0, 1);
 	    turnController.setContinuous(true);
 	}
@@ -60,16 +59,18 @@ public class AutoDrive extends Command implements PIDOutput{
 		targetAngle = angle;
 		turnController = new PIDController(kPRotate, kI, kD, Sensors.gyro, this);
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
-		turnController.setInputRange(-360.0,  360.0);
 	    turnController.setOutputRange(-1.0, 1);
 	    turnController.setContinuous(true);
 	}
 
 	protected void initialize() {
 		Sensors.resetEncoders();
+		Sensors.setCurrentPos();
+		turnController.setInputRange(Sensors.gyro.getAngle() - 360.0,
+				Sensors.gyro.getAngle() + 360.0);
 		if (rotateInPlace)
 		{
-			turnController.setSetpoint(targetAngle);
+			turnController.setSetpoint(Sensors.gyro.getAngle() + targetAngle);
 		}
 		else 
 		{
@@ -88,7 +89,14 @@ public class AutoDrive extends Command implements PIDOutput{
 			boolean done;
 			if (rotateInPlace)
 			{
-				done = Sensors.gyro.getAngle() >= targetAngle;
+				if (targetAngle > 0)
+				{
+					done = Sensors.getRelativeAngle() >= targetAngle;
+				}
+				else
+				{
+					done = Sensors.getRelativeAngle() <= targetAngle;
+				}
 			}
 			else
 			{
@@ -108,7 +116,7 @@ public class AutoDrive extends Command implements PIDOutput{
 				{
 					if (stallCounter == 75) 
 					{
-						//areMotorsStalled = true;
+						areMotorsStalled = true;
 					}
 					stallCounter++;
 				}
@@ -136,10 +144,10 @@ public class AutoDrive extends Command implements PIDOutput{
 	}
 
 	public void pidWrite(double output) {
+		output = -output;
 		if (rotateInPlace)
 		{
-			output = -output;
-			double minSpeed = 0.575;
+			double minSpeed = 0.59;
 			if (output > minSpeed|| output < -minSpeed)
 			{
 				rotateToAngleRate = output;
@@ -155,14 +163,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		}
 		else
 		{
-			if (driveSpeed < 0)
-			{
-				rotateToAngleRate = -1 * output;
-			}
-			else
-			{
-				rotateToAngleRate = -1 * output;
-			}
+			rotateToAngleRate = output;
 		}		
 	}
 	

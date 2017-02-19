@@ -9,14 +9,7 @@ public class AutonomousCommand extends CommandGroup {
 		// Test Mode
 		if (autoMode == "test")
 		{
-			addSequential(new AutoDrive(-0.6, 50));
-			addSequential(new AutoDrive(90));
-			addSequential(new AutoDrive(-0.6, 50));
-			addSequential(new AutoDrive(180));
-			addSequential(new AutoDrive(-0.6, 50));
-			addSequential(new AutoDrive(270));
-			addSequential(new AutoDrive(-0.6, 50));
-			addSequential(new AutoDrive(360));
+			addSequential(new AutoDrive(5));
 		}
 		
 		// This auto mode crosses the line and that's it. This is the default
@@ -46,7 +39,9 @@ public class AutonomousCommand extends CommandGroup {
 			}
 			if (startPos == "middle")
 			{
-				addSequential(new AutoDrive(-0.7, 73));
+				addSequential(new AutoDrive(-0.7, 65));
+				addSequential(new GearCorrect());
+				addSequential(new AutoDrive(-0.6, 8));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear());
 				addSequential(new PushGear());
