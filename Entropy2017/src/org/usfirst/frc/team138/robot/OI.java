@@ -18,12 +18,16 @@ public class OI {
     Button toggleChuteGuardButton = new JoystickButton(operatorStick, 4);
     Button toggleWristButton = new JoystickButton(operatorStick, 5);
     Button toggleClawButton = new JoystickButton(operatorStick, 6);
+    Button toggleRopeGrabberButton = new JoystickButton(operatorStick, 2);
+    Button shootButton = new JoystickButton(operatorStick, 7);
     
     public OI(){
     	toggleGearRamButton.whenPressed(new PushGear());
     	toggleChuteGuardButton.whenPressed(new SetGuardPosition());
     	toggleWristButton.whenPressed(new SetWristPosition());
     	toggleClawButton.whenPressed(new SetClawPosition());
+    	toggleRopeGrabberButton.whenPressed(new GraspRope());
+    	shootButton.whileHeld(new Shoot());
     }
     
 	public double getMoveSpeed()

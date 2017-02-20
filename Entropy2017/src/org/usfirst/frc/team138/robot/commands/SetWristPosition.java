@@ -1,6 +1,7 @@
 package org.usfirst.frc.team138.robot.commands;
 
 import org.usfirst.frc.team138.robot.Robot;
+import org.usfirst.frc.team138.robot.Sensors;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -29,9 +30,11 @@ public class SetWristPosition extends Command {
 				Robot.claw.guardUp();
 			}
 			if (isUp) {
+				Sensors.gearPlaceTiltAngle();
 				Robot.claw.wristUp();
 				setTimeout(0.3);
 			} else {
+				Sensors.gearAcqTiltAngle();
 				Robot.claw.wristDown();
 				setTimeout(0.0);
 			}

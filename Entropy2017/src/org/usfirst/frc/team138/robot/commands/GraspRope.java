@@ -1,0 +1,33 @@
+package org.usfirst.frc.team138.robot.commands;
+
+import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team138.robot.OI;
+import org.usfirst.frc.team138.robot.Robot;
+import org.usfirst.frc.team138.robot.RobotMap;
+
+public class GraspRope extends Command{
+	
+	public GraspRope(){
+		requires(Robot.climbingMechanism);
+	}
+
+	protected void initialize() {
+		Robot.climbingMechanism.setGrasper(Robot.climbingMechanism.getOpen());
+		setTimeout(0.5);
+	}
+
+	protected void execute() {
+	}
+
+	protected boolean isFinished() {
+		return isTimedOut();
+	}
+
+	protected void end() {
+		Robot.climbingMechanism.setSpeed(0.0);
+	}
+
+	protected void interrupted() {
+	}
+
+}

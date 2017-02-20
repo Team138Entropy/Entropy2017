@@ -29,6 +29,7 @@ public class Robot extends IterativeRobot {
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
     public static final Claw claw = new Claw();
+    public static final Shooter shooter = new Shooter();
     
     // Commands
     AutonomousCommand autonomousCommand;

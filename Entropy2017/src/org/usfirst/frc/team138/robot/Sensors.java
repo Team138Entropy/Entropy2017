@@ -2,6 +2,7 @@ package org.usfirst.frc.team138.robot;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Sensors {
@@ -10,6 +11,8 @@ public class Sensors {
 	
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
+	
+	static Servo cameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
 	
 	public static void initialize() {
         gyro = new ADXRS450_Gyro();
@@ -21,6 +24,16 @@ public class Sensors {
     	leftEncoder.setDistancePerPulse(0.124);
     	rightEncoder.setDistancePerPulse(0.124);
     	resetEncoders();
+	}
+	
+	public static void gearAcqTiltAngle()
+	{
+		cameraServo.set(0.0);
+	}
+	
+	public static void gearPlaceTiltAngle()
+	{
+		cameraServo.set(0.2);
 	}
 	
 	public static void setCurrentPos() {

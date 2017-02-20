@@ -40,12 +40,12 @@ public class AutonomousCommand extends CommandGroup {
 			if (startPos == "middle")
 			{
 				addSequential(new AutoDrive(-0.7, 65));
-				addSequential(new GearCorrect());
-				addSequential(new AutoDrive(-0.6, 8));
+				//addSequential(new GearCorrect());
+				addSequential(new AutoDrive(-0.6, 4));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear());
 				addSequential(new PushGear());
-				addSequential(new AutoDrive(1.0, 15));
+				addSequential(new AutoDrive(0.7, 15));
 				addSequential(new SetClawPosition(false));
 			}
 			if (startPos == "right")
