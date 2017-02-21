@@ -1,8 +1,8 @@
 package org.usfirst.frc.team138.robot;
 
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,6 +30,7 @@ public class Robot extends IterativeRobot {
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
     public static final Claw claw = new Claw();
     public static final Shooter shooter = new Shooter();
+    public static UsbCamera camServ;
     
     // Commands
     AutonomousCommand autonomousCommand;
@@ -41,6 +42,7 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	// Interface
 		oi = new OI();
+	    camServ = CameraServer.getInstance().startAutomaticCapture();
 		Sensors.initialize();
 		Sensors.updateSmartDashboard();
 		
@@ -67,7 +69,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
 		
 	
-		CameraServer.getInstance().startAutomaticCapture().setResolution(340, 240);
+		camServ.setResolution(640, 480);
+		camServ.setFPS(10);
     }
 	
 	/**
