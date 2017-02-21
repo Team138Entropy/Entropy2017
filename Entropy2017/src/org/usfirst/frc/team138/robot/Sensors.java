@@ -12,7 +12,7 @@ public class Sensors {
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
 	
-	static Servo cameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
+	//static Servo cameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
 	
 	public static void initialize() {
         gyro = new ADXRS450_Gyro();
@@ -28,12 +28,12 @@ public class Sensors {
 	
 	public static void gearAcqTiltAngle()
 	{
-		cameraServo.set(0.0);
+		//cameraServo.set(0.0);
 	}
 	
 	public static void gearPlaceTiltAngle()
 	{
-		cameraServo.set(0.2);
+		//cameraServo.set(0.2);
 	}
 	
 	public static void setCurrentPos() {

@@ -12,7 +12,7 @@ public class GraspRope extends Command{
 	}
 
 	protected void initialize() {
-		Robot.climbingMechanism.setGrasper(Robot.climbingMechanism.getOpen());
+		Robot.climbingMechanism.setGrasper(!Robot.climbingMechanism.getOpen());
 		setTimeout(0.5);
 	}
 
@@ -24,7 +24,6 @@ public class GraspRope extends Command{
 	}
 
 	protected void end() {
-		Robot.climbingMechanism.setSpeed(0.0);
 	}
 
 	protected void interrupted() {
