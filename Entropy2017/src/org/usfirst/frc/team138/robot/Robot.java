@@ -1,5 +1,7 @@
 package org.usfirst.frc.team138.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -8,6 +10,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team138.robot.subsystems.*;
+import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
+
+import java.io.FileNotFoundException;
+
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team138.robot.commands.*;
 
 /**
@@ -30,7 +38,6 @@ public class Robot extends IterativeRobot {
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
     public static final Claw claw = new Claw();
     public static final Shooter shooter = new Shooter();
-    public static UsbCamera camServ;
     
     // Commands
     AutonomousCommand autonomousCommand;
@@ -42,7 +49,6 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	// Interface
 		oi = new OI();
-	    camServ = CameraServer.getInstance().startAutomaticCapture();
 		Sensors.initialize();
 		Sensors.updateSmartDashboard();
 		
@@ -67,10 +73,6 @@ public class Robot extends IterativeRobot {
 		autoModeChooser.addObject("Place Gear and Release Hopper", "gearAndHopper");
 		autoModeChooser.addObject("Test" , "test");
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
-		
-	
-		camServ.setResolution(640, 480);
-		camServ.setFPS(10);
     }
 	
 	/**

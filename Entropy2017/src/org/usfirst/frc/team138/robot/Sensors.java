@@ -1,6 +1,12 @@
 package org.usfirst.frc.team138.robot;
 
+import java.util.ArrayList;
+
+import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
+
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,6 +17,9 @@ public class Sensors {
 	
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
+	
+	static UsbCamera camera;
+	public static Entropy2017Targeting cameraProcessor;
 	
 	//static Servo cameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
 	
@@ -24,6 +33,26 @@ public class Sensors {
     	leftEncoder.setDistancePerPulse(0.124);
     	rightEncoder.setDistancePerPulse(0.124);
     	resetEncoders();
+    	
+    	camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(640, 480);
+        camera.setFPS(12);
+        System.out.println(camera.getBrightness());
+    	
+    	cameraProcessor = new Entropy2017Targeting();
+		cameraProcessor.start();
+	}
+	
+	public static void targetingCameraMode()
+	{
+		camera.setExposureManual(0);
+        camera.setBrightness(0);
+	}
+	
+	public static void standardCameraMode()
+	{
+		camera.setExposureAuto();
+        camera.setBrightness(50);
 	}
 	
 	public static void gearAcqTiltAngle()
