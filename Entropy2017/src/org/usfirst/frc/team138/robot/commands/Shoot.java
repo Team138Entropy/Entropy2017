@@ -2,7 +2,6 @@ package org.usfirst.frc.team138.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team138.robot.Robot;
-import org.usfirst.frc.team138.robot.Sensors;
 
 public class Shoot extends Command{
 	

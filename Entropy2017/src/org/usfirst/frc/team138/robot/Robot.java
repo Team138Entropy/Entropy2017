@@ -1,21 +1,11 @@
 package org.usfirst.frc.team138.robot;
 
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team138.robot.subsystems.*;
-import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
-
-import java.io.FileNotFoundException;
-
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team138.robot.commands.*;
 
 /**
@@ -26,8 +16,7 @@ import org.usfirst.frc.team138.robot.commands.*;
  * directory.
  */
 public class Robot extends IterativeRobot {
-
-	// Interface
+	// Interface with players
 	public static OI oi;
     SendableChooser<String> teamChooser;
     SendableChooser<String> startPosChooser;
@@ -41,6 +30,9 @@ public class Robot extends IterativeRobot {
     
     // Commands
     AutonomousCommand autonomousCommand;
+    
+    // Global constants
+    public static String mode; // "auto" or "teleop"
 
     /**
      * This function is run when the robot is first started up and should be
@@ -50,11 +42,11 @@ public class Robot extends IterativeRobot {
     	// Interface
 		oi = new OI();
 		Sensors.initialize();
-		Sensors.updateSmartDashboard();
 		
+		// Smart Dashboard Initialization
+		Sensors.updateSmartDashboard();
 		SmartDashboard.putData(Scheduler.getInstance());
 		
-		//
 		teamChooser = new SendableChooser<String>();
 		teamChooser.addDefault("Red Alliance", "red");
 		teamChooser.addObject("Blue Alliance", "blue");
@@ -98,6 +90,7 @@ public class Robot extends IterativeRobot {
 	 * or additional comparisons to the switch structure below with additional strings & commands.
 	 */
     public void autonomousInit() {
+    	mode = "auto";
         autonomousCommand = new AutonomousCommand(teamChooser.getSelected(), 
         		startPosChooser.getSelected(),
         		autoModeChooser.getSelected());
@@ -113,6 +106,7 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopInit() {
+    	mode = "teleop";
         if (autonomousCommand != null) {
         	autonomousCommand.cancel();
         }

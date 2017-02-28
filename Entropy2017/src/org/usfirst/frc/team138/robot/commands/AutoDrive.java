@@ -47,9 +47,6 @@ public class AutoDrive extends Command implements PIDOutput{
 		driveSpeed = speedArg;
 		driveDistance = distanceArg;
 		turnController = new PIDController(kPDrive, kI, kD, Sensors.gyro, this);
-		turnController.setAbsoluteTolerance(ToleranceDegrees);
-	    turnController.setOutputRange(-1.0, 1);
-	    turnController.setContinuous(true);
 	}
 	
 	//rotates to an angle
@@ -58,31 +55,32 @@ public class AutoDrive extends Command implements PIDOutput{
 		rotateInPlace = true;
 		targetAngle = angle;
 		turnController = new PIDController(kPRotate, kI, kD, Sensors.gyro, this);
+	}
+
+	public void initialize() {
+		Sensors.resetEncoders();
+		Sensors.gyro.reset();
+		
 		turnController.setAbsoluteTolerance(ToleranceDegrees);         
 	    turnController.setOutputRange(-1.0, 1);
 	    turnController.setContinuous(true);
-	}
-
-	protected void initialize() {
-		Sensors.resetEncoders();
-		Sensors.setCurrentPos();
-		turnController.setInputRange(Sensors.gyro.getAngle() - 360.0,
-				Sensors.gyro.getAngle() + 360.0);
+		turnController.setInputRange(360.0, 360.0);
 		if (rotateInPlace)
 		{
-			turnController.setSetpoint(Sensors.gyro.getAngle() + targetAngle);
+			turnController.setSetpoint(targetAngle);
 		}
 		else 
 		{
-			turnController.setSetpoint(Sensors.gyro.getAngle());
+			turnController.setSetpoint(0);
 		}
 		turnController.enable();
 	}
 
-	protected void execute() {
+	public void execute() {
 		if (areMotorsStalled) 
 		{
 			Robot.drivetrain.drive(0.0, 0.0);
+			System.out.println("Stalled");
 		}
 		else
 		{
@@ -91,11 +89,11 @@ public class AutoDrive extends Command implements PIDOutput{
 			{
 				if (targetAngle > 0)
 				{
-					done = Sensors.getRelativeAngle() >= targetAngle;
+					done = Sensors.gyro.getAngle() >= targetAngle;
 				}
 				else
 				{
-					done = Sensors.getRelativeAngle() <= targetAngle;
+					done = Sensors.gyro.getAngle() <= targetAngle;
 				}
 			}
 			else
@@ -110,13 +108,13 @@ public class AutoDrive extends Command implements PIDOutput{
 			else
 			{
 				Robot.drivetrain.drive(driveSpeed, rotateToAngleRate);
-				System.out.println("Rate: " + rotateToAngleRate);
 				
 				if (lastRightDistance == Sensors.getRightDistance() || lastLeftDistance == Sensors.getLeftDistance()) 
 				{
 					if (stallCounter == 75) 
 					{
-						areMotorsStalled = true;
+						isDone = true;
+						//areMotorsStalled = true;
 					}
 					stallCounter++;
 				}
@@ -132,12 +130,11 @@ public class AutoDrive extends Command implements PIDOutput{
 		}
 	}
 
-	protected boolean isFinished() {
+	public boolean isFinished() {
 		return isDone;
 	}
 
-	protected void end() {
-		System.out.println("Ended");
+	public void end() {
 	}
 
 	protected void interrupted() {
@@ -147,7 +144,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		output = -output;
 		if (rotateInPlace)
 		{
-			double minSpeed = 0.59;
+			double minSpeed = 0.7;
 			if (output > minSpeed|| output < -minSpeed)
 			{
 				rotateToAngleRate = output;
@@ -163,7 +160,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		}
 		else
 		{
-			rotateToAngleRate = output;
+			rotateToAngleRate =  output;
 		}		
 	}
 	

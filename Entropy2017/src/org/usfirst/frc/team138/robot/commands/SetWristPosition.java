@@ -25,7 +25,11 @@ public class SetWristPosition extends Command {
 		{
 			isUp = !Robot.claw.wristIsUp();
 		}
-		if (!isUp == Robot.claw.wristIsUp() && !Robot.claw.clawIsOpen()) {
+		if (!isUp == Robot.claw.wristIsUp()) {
+			if (Robot.claw.clawIsOpen())
+			{
+				Robot.claw.closeClaw();
+			}
 			if (!Robot.claw.guardIsUp()){
 				Robot.claw.guardUp();
 			}

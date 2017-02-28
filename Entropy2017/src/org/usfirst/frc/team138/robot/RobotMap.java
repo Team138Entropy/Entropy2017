@@ -43,4 +43,8 @@ public class RobotMap {
 	public final static int GEAR_RAM_PORT = 3;
 	public final static int SHOOTER_GATE_PORT = -1;
 	public final static int ROPE_GRABBING_SOLENOID_PORT = 4;
+	
+	// Relay
+	public final static int GEAR_CAMERA_LIGHT_PORT = 0;
+	public final static int SHOOTER_CAMERA_LIGHT_PORT = 1;
 }

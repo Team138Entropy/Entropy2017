@@ -1,539 +1,81 @@
 package org.usfirst.frc.team138.robot.subsystems.vision2017;
-import org.opencv.imgproc.Imgproc;
 
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team138.robot.Sensors;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
-
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * Vision processing thread to look for gear placement pegs and high goal targets in the
+ * FIRST Robotics 2017 competition, Steamworks
+ * @author Team 138 Entropy
+ *
+ */
 public class Entropy2017Targeting extends Thread {
-	// Widget Name
-	public static final String NAME = "ENTROPY-2017-TARGETING 2:18:2017";
+	// DEBUG_ENABLED creates a debug stream on the SmartDashboard that draws the target, lagging for 12 frames
+	public static final boolean DEBUG_ENABLED = false;
 	
-	// Random unique identifier for the camera - leave this - otherwise, you will get a warning
-	private static final long serialVersionUID = -412351776843653585L;
+	// Constants to find correction angle
+	private static final double pixelsPerDegree = 17.0;
+	private static final double cameraOffsetInches = -5.1;
+	private static final double shooterOffsetInches = 12;
+	private static final double pegGapInches = 6.25;
+	private static final double pegWidthInches = 10.25;
+	private static final double pegHeightInches = 5;
+	private static final double highGoalHeightInches = 10;
+	private static final double highGoalGapInches = 2;
+	private static final double highGoalWidthInches = 10;
 	
+	// Path for testing images from PC
+	private static String rootFolder = "C:\\Users\\Team138\\Vision2017";
 	
-	enum Parameters	{
-		lowHue,
-		highHue,
-		lowSat,
-		highSat,
-		highVal,
-		lowVal,
-		DilateSize,   // 4.0
-		DilateKernel,
-		CROSS_HAIR_X,
-		CROSS_HAIR_Y,
-		CROSS_HAIR_SIZE,
-		MilliSecsBetweenPics,   // 1000
-		ErodeSize,   // 4.0
-		AspectMin,   // 1.0
-		AspectMax,   // 5.0
-		AreaMin,     // 3000
-		AreaMax,     // 5000
-		HeightMin,   // 25.0
-		SaveRaw,
-		SaveProcessed
-	};
-	
-	static String rootFolder = "C:\\Users\\Team138\\Vision2017";
-	
-	// Network tables
-	private NetworkTable table;
-	
-	// Keep track of frame number and processing results
-	private long m_frameNumber = 0;
-
-	private long highGoalx = 1000;
-	private long highGoaly = 1000;
-	private long highGoalxRange = 1000;
-	
-	private long pegyheight = 1000;
-	private long pegxspace = 1000;
-	private long pegx = 1000;
-	private long pegy = 1000;
-	private ArrayList<Double> angleList = new ArrayList<Double>();
-	
-	
-	// Image Results to send back to robot
-	// NOTE:  By convention, data in the array is as follows:
-	//       imgResults[0] is frameNumber
-	//       imgResults[1] is pegx   (1000.0 is a "magic number" meaning no target found)
-	//       imgResults[2] is pegxspace   (1000.0 is a "magic number" meaning no target found)
-	//       imgResults[3] is pegyheight   (1000.0 is a "magic number" meaning no target found)
-	//       imgResults[4] is highGoalx (1000.0 is a "magic number" meaning no target found)
-	//       imgResults[5] is highGoalxRange (1000.0 is a "magic number" meaning no target found)
-	
-	// Date object for saving images
+	// I don't know what these are necessary for but I'll leave them in anyway
 	private Date m_lastSnapshotTime;
 	private Date m_lastRawSnapshotTime;
-	//private Date m_lastProcSnapshotTime;
+	@SuppressWarnings("unused")
+	private static final long serialVersionUID = -412351776843653585L; //Unique identifier; Is it needed?
 	
-	//private ParameterFile m_pt;
+	// Camera Pointers
+	static UsbCamera gearCamera;
+	static UsbCamera ropeAndShooterCamera;
+
+	// Processing Variables
 	private Properties theProperties;
+	private ArrayList<TargetInformation> infoList = new ArrayList<TargetInformation>();
+	private CvSink pegSink;
+    private CvSink shooterSink;
+	private int framesToProcess = 0;
+	private boolean processingForPeg = true;
+	private boolean cancelled = false;
+	private boolean done = false;
+	private Point lastKnownTarget = new Point();
+	private int frameLag = 0;
 	
-	private String  SmartDashboardPath = "/SmartDashboard/extensions/";
-	
-	// test Main function to process a folder with images
-	int framesToProcess = 0;
-	
-	public void run() {        
-        CvSink cvSink = CameraServer.getInstance().getVideo();        
-        Mat source = new Mat();
-        
-        while(!Thread.interrupted()) {
-        	if (framesToProcess > 0)
-        	{
-        		cvSink.grabFrame(source);
-                processImage(source);
-                framesToProcess--;
-        	}
-        }
-	}
-	
-	public ArrayList<Double> getCorrectionAngles()
-	{
-		@SuppressWarnings("unchecked")
-		ArrayList<Double> temp = (ArrayList<Double>) angleList.clone();
-		angleList.clear();
-		return temp;
-	}
-	
-	public void processFrames(int numFrames)
-	{
-		framesToProcess = numFrames;
-	}
-	
-	public static void main(String[] args)
-	{
-//		
-//		
-//		String inputFolder = rootFolder + "\\LED Peg";
-//		
-//		String outputFolder = rootFolder + "\\LEDPeg_output";
-//				
-//		File folder = new File(inputFolder);
-//		File[] listOfFiles = folder.listFiles();
-//		
-//		Entropy2017Targeting imageProcessor = new Entropy2017Targeting();
-//		
-//		for(File f : listOfFiles)
-//		{
-//			System.out.println();
-//			System.out.println("---------------------------------------------------------------------------------------------");
-//			System.out.println();
-//			
-//			Mat ourImage = Imgcodecs.imread(f.getPath());
-//			System.out.println("File: " + f.getPath());
-//			imageProcessor.processImage(ourImage);
-//			Imgcodecs.imwrite(outputFolder + "\\"+ f.getName()+".png", imageProcessor.outputImage);
-//			
-//			
-//			System.out.println("Output "+ f.getName());
-//		}
-//		//imageProcessor.disconnect();
-//		System.out.println("Done.");
-	}
-	
-	public Entropy2017Targeting() {
-		m_frameNumber = 0;
+	/**
+	 * Vision processing thread to look for gear placement pegs and high goal targets
+	 * @param gearCam previously created gear camera
+	 * @param ropeAndShooterCam previously created rope and shooter camera
+	 */
+	public Entropy2017Targeting(UsbCamera gearCam, UsbCamera ropeAndShooterCam) {
+		gearCamera = gearCam;
+		ropeAndShooterCamera = ropeAndShooterCam;
+		
+		if (gearCam != null && ropeAndShooterCam != null)
+		{
+			pegSink = CameraServer.getInstance().getVideo(gearCamera);
+	        shooterSink = CameraServer.getInstance().getVideo(ropeAndShooterCamera);
+		}
 		m_lastSnapshotTime = new Date();
 		m_lastRawSnapshotTime = new Date();
 		
-		loadParameters();
-	}
-	
-	Mat outputImage;
-	protected void processImage(Mat m) {
-		
-		// default all returns to robot to no value
-		pegx = 1000;
-		pegy = 1000;
-		pegyheight = 1000;
-		pegxspace = 1000;
-		
-		highGoalx = 1000;
-		highGoaly = 1000;
-		highGoalxRange = 1000;
-		
-		//save the raw image
-		//saveRawImage(m);
-		
-		// increment the frameNumber
-		m_frameNumber++;
-		
-		if ( theProperties == null ) {
-			//m_error = "parameter table missing";
-			return; 
-		}
-		Mat step1 = getHSVThreshold(m);
-		
-		findPeg(step1);
-		
-		// TODO: Debug later
-		//findHighGoal(step1);
-		
-		int width = m.cols();
-		if (pegx != 1000)
-		{
-			angleList.add((double)((pegx-width/2))/width * 60.0);
-		}
-		
-		
-				
-		if (pegx < 1000) {
-			drawTarget(m, pegx, pegy,true);
-		}
-		
-		if (highGoalx < 1000) {
-			drawTarget(m, highGoalx, highGoaly,false);
-		}
-		
-		outputImage = m;
-		
-		return;
-    }
-	
-	/**
-	 * Process pixels in the correct color range and cleanup the image
-	 * @param m Input image
-	 * @return Cleaned up image
-	 */
-	
-	private Mat getHSVThreshold(Mat m) {
-		
-		// convert BGR values to HSV values
-		Mat hsv = new Mat();
-		Imgproc.cvtColor(m, hsv, Imgproc.COLOR_BGR2HSV);
-		
-		
-		Mat inRange = new Mat();
-		Core.inRange(
-				hsv, 
-				new Scalar(Double.parseDouble(theProperties.getProperty("lowHue")), 
-					Double.parseDouble(theProperties.getProperty("lowSat")),
-					Double.parseDouble(theProperties.getProperty("lowVal"))),
-				new Scalar(Double.parseDouble(theProperties.getProperty("highHue")),
-							Double.parseDouble(theProperties.getProperty("highSat")),
-							Double.parseDouble(theProperties.getProperty("highVal"))), 
-				inRange);
-		
-		Mat grey = new Mat();
-		Imgproc.cvtColor(m, grey, Imgproc.COLOR_BGR2GRAY);
-		Core.bitwise_and(grey, inRange, grey);
-
-        Imgcodecs.imwrite(rootFolder + "/1_Post_inRange" + ".png", grey);
-		
-		return grey;
-	}
-	
-	/**
-	 * Debug routine to print peaks
-	 * @param name
-	 * @param peaks
-	 */
-	private static void printPeaks(String name,List<PeakLoc> peaks) {
-		System.out.println("Peaks for " + name);
-		for (int k=0;k<peaks.size();k++) {
-			System.out.println("peak[" + k + "]= " + peaks.get(k).getStart() + " , " + peaks.get(k).getStop());
-		}
-		
-		
-	}
-	
-	/**
-	 * Sum the rows or columns of a matrix
-	 * @param m input 2D matrix as unsigned bytes
-	 * @param byRow true is to sumy the matrix by row; otherwise by colums
-	 * @return integer array of sums
-	 */
-	private static long[] sums(Mat m,boolean byRow) {
-		
-		int rows = m.rows();
-		int cols = m.cols();
-		byte[] data = new byte[rows*cols];
-		long[] retSums = null;
-		
-		int status = m.get(0, 0,data);
-		
-		long total = 0;
-		for (int k=0;k<data.length;k++) {
-			total += Byte.toUnsignedInt(data[k]);
-		}
-		
-		if (byRow) {
-			retSums = new long[cols];
-			for (int col=0;col<cols;col++) {
-				retSums[col] = 0;
-				for (int row=0;row<rows;row++) {
-					int k = row*cols+col;
-					retSums[col] += Byte.toUnsignedInt(data[k]);
-				}
-			}
-		}
-		else {
-			retSums = new long[rows];
-			for (int row=0;row<rows;row++) {
-				retSums[row] = 0;
-				for (int col=0;col<cols;col++) {
-					int k = row*cols+col;
-					retSums[row] += Byte.toUnsignedInt(data[k]);
-				}
-			}
-		}
-		
-//		System.out.println("" + m.rows()+ "  " + m.cols());
-//		System.out.println(status);
-//		System.out.println(total);
-		int total1 = 0;
-		for (int k=0;k<retSums.length;k++) {
-			total1+= retSums[k];
-		}
-		//System.out.println(total1);
-	
-		return retSums;
-		
-	}
-	private void findPeg(Mat m){
-		
-	    long[] xsums = sums(m,true);
-	    long[] ysums = sums(m,false);
-	    
-	    List<PeakLoc> ypeaks = findPeaks(ysums);
-	    List<PeakLoc> xpeaks = findPeaks(xsums);
-		 
-		//locate peaks (all of them) in sums, for peg it will be 2 x peaks, 1 y peak
-	    if ((xpeaks.size() == 2) && (ypeaks.size() >0)){
-	    	pegx = (xpeaks.get(1).getStart() + xpeaks.get(0).getStop()) /2;
-	    	pegxspace = xpeaks.get(1).getStart() - xpeaks.get(0).getStop();
-	    	pegyheight = ypeaks.get(0).getStop() - ypeaks.get(0).getStart();
-	    	pegy = ypeaks.get(0).getStart() + pegyheight/2;
-	    	//System.out.println("pegx = " + pegx + " , " + "pegxspace = " + pegxspace + " , " + "pegyheight = " + pegyheight); 
-	    }
-	    
-	}
-	/**
-	 * 
-	 * @param m
-	 * @param x
-	 * @param y
-	 */
-	private void drawTarget(Mat m, long x, long y,boolean peg){
-		
-		int size = 40;
-		Scalar color;
-		if (peg) {
-			color = new Scalar(0,0,255);
-		}
-		else {
-			color = new Scalar(0,255,255);
-		}
-		
-		Imgproc.line(m, new Point(x-size,y), new Point(x+size,y), color,2);
-		Imgproc.line(m, new Point(x,y-size), new Point(x,y+size), color,2);
-		for (int k =0;k<4;k++) {
-			Imgproc.circle(m, new Point(x,y), (k+1)*size/4, color);
-		}
-		
-	}
-	
-	/**
-	 * locate the high goal
-	 * @param m
-	 */
-	private void findHighGoal(Mat m) {
-		
-		/*
-		 * private long highGoalx = 1000;
-	       private long highGoaly = 1000;
-	       private long highGoalxRange = 1000;
-		 */
-		
-		// crop the image looking at top only
-		int heightThreshold = m.height();
-		Rect rectCrop = new Rect(0,0,m.width(),heightThreshold);
-        Mat imageROI = m.submat(rectCrop);
-        
-        Imgcodecs.imwrite(rootFolder + "/1_Crop" + ".png", imageROI);
-        
-        
-        // locate all the possible candidates
-        long[] xsums = sums(imageROI,true);
-        
-	    List<PeakLoc> xpeaks = findPeaks(xsums,10);
-	    
-	    // look for 2 peaks in each candidate
-	    for (int k=0;k<xpeaks.size();k++) {
-	    	long xstart = xpeaks.get(k).getStart();
-	    	long xstop = xpeaks.get(k).getStop();
-	    			
-	    	// Create an image within the peak
-	    	Rect rectQual = new Rect((int)xstart,0,(int)(xstop-xstart),heightThreshold);
-	        Mat imageQual = m.submat(rectQual);
-	        
-	        // sum within y within the peak
-	        long[] ysums = sums(imageQual,false);
-		    List<PeakLoc> ypeaks = findPeaks(ysums,10);
-		    
-		    // only process if we have 2 peaks (two circles)
-		    if (ypeaks.size() == 2) {
-		    	int height0 = (int) (ypeaks.get(0).getStop() - ypeaks.get(0).getStart());
-		    	int height1 = (int) (ypeaks.get(1).getStop() - ypeaks.get(1).getStart());
-		    	int space = (int) (ypeaks.get(0).getStop() - ypeaks.get(1).getStart());
-		    	
-		    	// compute the ratios; top is twice as big as bottom and space is same as bottom
-		    	double heightRatio = (double)height0/height1;
-		    	double spaceRatio = (double)space/height1;
-		    	
-		    	// check the porportions
-		    	double hightRatioTol = 0.25;
-		    	double spacetRatioTol = 0.5;
-		    	if ((Math.abs(heightRatio-2.0) <= hightRatioTol) && ((Math.abs(spaceRatio-1.0) <= spacetRatioTol))) {
-		    		
-		    		// save targeting info and quit
-		    		highGoalx = (xstop+xstart)/2;
-		    		highGoaly = ypeaks.get(0).getStop();
-		    		highGoalxRange = xstop-xstart;
-		    		break;
-		    		
-		   
-		    	} // size matches
-		    	
-		    } // #peaks in y is 2
-		    
-		    
-	    } // for each peak in x
-		
-	
-		
-	}
-	
-	/**
-	 * Peak location
-	 * @author Team138
-	 *
-	 */
-	private static class PeakLoc {
-		private long start;
-		private long stop;
-		public PeakLoc(long start, long stop) {
-			super();
-			this.start = start;
-			this.stop = stop;
-		}
-		public long getStart() {
-			return start;
-		}
-		public void setStart(long start) {
-			this.start = start;
-		}
-		public long getStop() {
-			return stop;
-		}
-		public void setStop(long stop) {
-			this.stop = stop;
-		}
-		
-	}
-	
-	public static void main1(String[] args) {
-		
-		System.out.println("Start");
-		long[] testData = new long[10];
-		for (int k=0;k<testData.length;k++) {
-			testData[k] = 0;
-		}
-		testData[2] = 10;
-		testData[3] = 12;
-		testData[7] = 15;
-		testData[8] = 19;
-		
-		List<PeakLoc> peaks = findPeaks(testData);
-		System.out.println(peaks);
-		
-	}
-	private static List<PeakLoc> findPeaks(long[] sums,long minWidth) {
-		
-		long maxVal = Arrays.stream(sums).max().getAsLong();
-		ArrayList<PeakLoc> ret = new ArrayList<PeakLoc>();
-		boolean looking = true;
-		long start = 0;
-		
-		for (int k=0;k<sums.length;k++) {
-			if (looking){
-				if ((sums[k]) > (maxVal/2)){
-					looking = false;
-					start = k;
-				}
-			}
-			else{
-				if ((sums[k]) < (maxVal/4)){
-					looking = true;
-					long width = (k-1)-start;
-					if (width >= minWidth) {
-					    ret.add(new PeakLoc(start, k-1));
-					}
-				}
-			}
-			
-		}
-		if (looking == false){
-			ret.add(new PeakLoc(start, sums.length - 1));
-		}
-		
-		return ret;
-	}
-	
-	private static List<PeakLoc> findPeaks(long[] sums) {
-		
-		List<PeakLoc> ret = findPeaks(sums,3);
-		
-		return ret;
-	}
-	
-	private void updateNetworkTables(){
-		
-	}
-	
-
-
-	private void saveProcessedImage(Mat m) {
-		//if (m_pt.get(Parameters.SaveProcessed.ordinal()) > 0.5) {
-		if (Double.parseDouble(theProperties.getProperty("SaveProcessed", "0.0")) > 0.5) {
-			Date now = new Date();
-			if (now.getTime() - m_lastSnapshotTime.getTime() >= Double.parseDouble(theProperties.getProperty("MilliSecsBetweenPics"))) {
-				String fileName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS").format(now);
-				Imgcodecs.imwrite("C:/StrongholdImages/Camera_" + fileName + ".jpg", m);
-				m_lastSnapshotTime = new Date();
-			}
-		}
-	}
-	
-	private void saveRawImage(Mat m) {
-		if (Double.parseDouble(theProperties.getProperty("SaveRaw", "0.0")) > 0.5) {
-			Date now = new Date();
-			if (now.getTime() - m_lastRawSnapshotTime.getTime() >= 1000) {
-				String fileName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS").format(now);
-				Imgcodecs.imwrite("C:/StrongholdRawImages/Camera_" + fileName + ".jpg", m);
-				m_lastRawSnapshotTime = new Date();
-			}
-		}
-	}
-	
-	private void loadParameters() {
 		theProperties = new Properties();
-		
 		theProperties.setProperty("lowHue", "70");
 		theProperties.setProperty("highHue", "100");
 		theProperties.setProperty("lowSat", "100");
@@ -551,6 +93,549 @@ public class Entropy2017Targeting extends Thread {
 		theProperties.setProperty("AspectMax", "5.0");
 		theProperties.setProperty("AreaMin", "1000");
 		theProperties.setProperty("AreaMax", "5000");
+	}
+	
+	public void run() {
+		if (pegSink == null || shooterSink == null)
+		{
+			return;
+		}
+		if (DEBUG_ENABLED)
+		{
+			Sensors.turnOnCameraLight(true);
+			Sensors.turnOnCameraLight(false);
+		}
+		CvSource debugStream = CameraServer.getInstance().putVideo("Debug Stream", 640, 480);
+        Mat frame = new Mat();
+        
+        while(!done) {
+        	if (!DEBUG_ENABLED)
+        	{
+        		synchronized(this)
+            	{
+            		try {
+    					this.wait();
+    				} catch (InterruptedException e) {}
+    	        	try {
+    					this.wait(40);
+    				} catch (InterruptedException e) {}
+            	}
+            	
+            	while (framesToProcess > 0)
+            	{
+            		try
+            		{
+            			if (!cancelled)
+                		{
+                			if (processingForPeg)
+                    		{
+                    			pegSink.grabFrame(frame);
+                    		}
+                    		else
+                    		{
+                    			shooterSink.grabFrame(frame);
+                    		}
+                            processImage(frame);
+                            System.out.println("Frame: " + framesToProcess);
+                            framesToProcess--;
+                		}
+                		else
+                		{
+                			framesToProcess = 0;
+                			getTargetInformation();
+                			cancelled = false;
+                		}
+            		}
+            		catch (Exception e)
+            		{
+            			System.out.println("failed somewhere in processing");
+            		}
+            	}
+            	Sensors.standardCameraMode(processingForPeg);
+            	Sensors.turnOffCameraLight(processingForPeg);
+        	}
+        	else
+        	{
+        		if (processingForPeg)
+        		{
+        			pegSink.grabFrame(frame);
+        		}
+        		else
+        		{
+        			shooterSink.grabFrame(frame);
+        		}
+        		if (framesToProcess > 0)
+            	{
+            		if (!cancelled)
+            		{
+                        processImage(frame);
+                        framesToProcess--;
+            		}
+            		else
+            		{
+            			framesToProcess = 0;
+            			getTargetInformation();
+            			cancelled = false;
+            		}
+            	}
+        		if (frameLag > 0)
+        		{
+        			frameLag--;
+        			drawTarget(frame, (long)lastKnownTarget.x, (long)lastKnownTarget.y);
+        			if (frameLag == 0)
+            		{
+            			Sensors.standardCameraMode(processingForPeg);
+            		}
+        		}
+        		debugStream.putFrame(frame);
+        	}
+        }
+	}
+	
+	public void shutdownThread()
+	{
+		done = true;
+		if (!DEBUG_ENABLED)
+		{
+			this.notify();
+		}
+	}
+	
+	public ArrayList<TargetInformation> getTargetInformation()
+	{
+		@SuppressWarnings("unchecked")
+		ArrayList<TargetInformation> ret = (ArrayList<TargetInformation>) infoList.clone();
+		infoList.clear();
+		return ret;
+	}
+	
+	/**
+	 * Process the specified number of frames for a target
+	 * @param numFrames number of frames to process
+	 * @param targetingPeg true to look for peg target, false to look for high goal target
+	 */
+	public void processFrames(int numFrames, boolean targetingPeg)
+	{
+		Sensors.targetingCameraMode(targetingPeg);
+		Sensors.turnOnCameraLight(targetingPeg);
+		framesToProcess = numFrames;
+		processingForPeg = targetingPeg;
+		if (!DEBUG_ENABLED)
+		{
+			synchronized(this)
+			{
+				this.notify();
+			}
+		}
+	}
+	
+	public void cancelProcessing()
+	{
+		if (framesToProcess > 0)
+		{
+			cancelled = true;
+		}
+	}
+	
+	/**
+	 * Test main function to find targets from root folder
+	 * @param args unused
+	 */
+	public static void main(String[] args)
+	{
+		String inputFolder = rootFolder + "\\LED Peg";
+		String outputFolder = rootFolder + "\\LEDPeg_output";
+				
+		File folder = new File(inputFolder);
+		File[] listOfFiles = folder.listFiles();
+		
+		Entropy2017Targeting imageProcessor = new Entropy2017Targeting(null, null);
+		imageProcessor.processingForPeg = true;
+		
+		for(File f : listOfFiles)
+		{
+			System.out.println();
+			System.out.println("---------------------------------------------------------------------------------------------");
+			System.out.println();
+			System.out.println("File: " + f.getPath());
+			
+			Mat ourImage = Imgcodecs.imread(f.getPath());
+			imageProcessor.processImage(ourImage);
+			Imgcodecs.imwrite(outputFolder + "\\"+ f.getName()+".png", ourImage);
+			
+			System.out.println("Completed file.");
+		}
+		System.out.println("Processed all images.");
+	}
+
+	/**
+	 * Processes an image for either peg or high goal targets
+	 * @param image
+	 */
+	private void processImage(Mat image) {
+		TargetInformation targetInfo;
+		
+		Mat cleanedImage = getHSVThreshold(image);
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//vvvvvvvvvvvvvvvvvvv FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE vvvvvvvvvvvvvvvvvvv//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (processingForPeg)
+		{
+			targetInfo = findPeg(cleanedImage);
+		}
+		else
+		{
+			targetInfo = findHighGoal(cleanedImage);
+		}
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//^^^^^^^^^^^^^^^^^^^ FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE ^^^^^^^^^^^^^^^^^^^//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		// If debug mode is enabled, the target will be drawn on the 
+		// image for 12 frames at the last known position
+		if (targetInfo.targetFound)
+		{
+			lastKnownTarget.x = (double)targetInfo.aimX;
+			lastKnownTarget.y = (double)targetInfo.y;
+			frameLag = 12;
+		}
+		
+		infoList.add(targetInfo);
+		return;
+    }
+
+	/**
+	 * Process pixels in the correct color range and cleanup the image
+	 * @param image image to clean
+	 * @return cleaned up image
+	 */
+	private Mat getHSVThreshold(Mat image) {
+		
+		// convert BGR values to HSV values
+		Mat hsv = new Mat();
+		Imgproc.cvtColor(image, hsv, Imgproc.COLOR_BGR2HSV);
+		
+		
+		Mat inRange = new Mat();
+		Core.inRange(
+				hsv, 
+				new Scalar(Double.parseDouble(theProperties.getProperty("lowHue")), 
+					Double.parseDouble(theProperties.getProperty("lowSat")),
+					Double.parseDouble(theProperties.getProperty("lowVal"))),
+				new Scalar(Double.parseDouble(theProperties.getProperty("highHue")),
+							Double.parseDouble(theProperties.getProperty("highSat")),
+							Double.parseDouble(theProperties.getProperty("highVal"))), 
+				inRange);
+		
+		Mat grey = new Mat();
+		Imgproc.cvtColor(image, grey, Imgproc.COLOR_BGR2GRAY);
+		Core.bitwise_and(grey, inRange, grey);
+
+        Imgcodecs.imwrite(rootFolder + "/1_Post_inRange" + ".png", grey);
+		
+		return grey;
+	}
+	
+	/**
+	 * Locate the peg target in an image, if any
+	 * @param image input image
+	 * @return all information about target, or returns blank TargetInformation if no targets found
+	 */
+	private TargetInformation findPeg(Mat image) {
+		TargetInformation ret = new TargetInformation();
+		ret.targetingPeg = true;
+		
+	    long[] xsums = sums(image, true);
+	    long[] ysums = sums(image, false);
+	    
+	    List<PeakLoc> ypeaks = findPeaks(ysums);
+	    List<PeakLoc> xpeaks = findPeaks(xsums);
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//vvvvvvvvvvvvvvvvvvv FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE vvvvvvvvvvvvvvvvvvv//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    
+	    // Target is only found if we have exactly 2 x peaks, representing both of the pieces of tape
+	    if ((xpeaks.size() == 2) && (ypeaks.size() > 0)){
+	    	ret.targetFound = true;
+	    	ret.x = (xpeaks.get(1).getStart() + xpeaks.get(0).getStop()) / 2;
+	    	ret.gap = xpeaks.get(1).getStart() - xpeaks.get(0).getStop();
+	    	ret.width = xpeaks.get(1).getStop() - xpeaks.get(0).getStart();
+	    	ret.height = ypeaks.get(0).getStop() - ypeaks.get(0).getStart();
+	    	ret.y = ypeaks.get(0).getStart() + ret.height/2;
+	    	
+    		double pixelsPerInch = ret.gap / pegGapInches;
+	    	if (xpeaks.get(0).isTruePeak() && xpeaks.get(1).isTruePeak())
+	    	{
+	    		pixelsPerInch = (pixelsPerInch + ret.width / pegWidthInches) / 2;
+	    	}
+	    	if (ypeaks.get(0).isTruePeak())
+	    	{
+	    		pixelsPerInch = (pixelsPerInch + ret.width / pegHeightInches) / 2;
+	    	}	    	
+	    	ret.aimX = ret.x + cameraOffsetInches * pixelsPerInch;
+	    	
+	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerDegree;
+	    }
+	    else
+	    {
+	    	ret.targetFound = false;
+	    }
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//^^^^^^^^^^^^^^^^^^^ FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE ^^^^^^^^^^^^^^^^^^^//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    
+	    return ret;
+	}
+	
+	/**
+	 * Locate the high goal in an image, if any
+	 * @param image input image
+	 * @return all information about target, or returns blank TargetInformation if no targets found
+	 */
+	private TargetInformation findHighGoal(Mat image) {
+		TargetInformation ret = new TargetInformation();
+		ret.targetingPeg = false;
+		
+        long[] xsums = sums(image, true);
+        long[] ysums = sums(image, false);
+        
+	    List<PeakLoc> xpeaks = findPeaks(xsums, 10);
+	    List<PeakLoc> ypeaks = findPeaks(ysums, 10);
+
+	    if (ypeaks.size() == 2 && xpeaks.size() > 0) {
+	    	ret.targetFound = true;
+	    	ret.x = (xpeaks.get(0).getStop() - xpeaks.get(0).getStart()) / 2;
+	    	ret.gap = ypeaks.get(1).getStart() - ypeaks.get(0).getStop();
+	    	ret.width = xpeaks.get(0).getStop() - xpeaks.get(0).getStart();
+	    	ret.height = ypeaks.get(1).getStop() - ypeaks.get(0).getStart();
+	    	ret.y = (ypeaks.get(0).getStop() + ypeaks.get(1).getStart())/2;
+	    	
+	    	double pixelsPerInch = ret.gap / highGoalGapInches;
+	    	if (xpeaks.get(0).isTruePeak() && xpeaks.get(1).isTruePeak())
+	    	{
+	    		pixelsPerInch = (pixelsPerInch + ret.width / highGoalWidthInches) / 2;
+	    	}
+	    	if (ypeaks.get(0).isTruePeak())
+	    	{
+	    		if (xpeaks.get(0).isTruePeak() && xpeaks.get(1).isTruePeak())
+	    		{
+	    			pixelsPerInch = (pixelsPerInch * 2 + ret.width / highGoalHeightInches) / 3;
+	    		}
+	    		else
+	    		{
+	    			pixelsPerInch = (pixelsPerInch + ret.width / highGoalHeightInches) / 2;
+	    		}
+	    	} 	
+	    	
+	    	ret.aimX = ret.x + (cameraOffsetInches - shooterOffsetInches) * pixelsPerInch;
+	    	
+	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerDegree;
+	    }
+	    else
+	    {
+	    	ret.targetFound = false;
+	    }
+	    
+	    return ret;
+	}
+	
+	/**
+	 * Draws a reticle on the image at the specified coordinates
+	 * @param image canvas image to draw on
+	 * @param x target x coordinate
+	 * @param y target y coordinate
+	 */
+	private void drawTarget(Mat image, long x, long y){
+		
+		int size = 40;
+		Scalar color;
+		color = new Scalar(0,0,255);
+		
+		Imgproc.line(image, new Point(x-size,y), new Point(x+size,y), color,2);
+		Imgproc.line(image, new Point(x,y-size), new Point(x,y+size), color,2);
+		for (int k =0;k<4;k++) {
+			Imgproc.circle(image, new Point(x,y), (k+1)*size/4, color);
+		}
+		
+	}
+	
+	/**
+	 * Sum the rows or columns of a matrix
+	 * @param m input 2D matrix as unsigned bytes
+	 * @param byRow true sums the matrix by row; otherwise by columns
+	 * @return integer array of sums
+	 */
+	private static long[] sums(Mat m,boolean byRow) {
+		int rows = m.rows();
+		int cols = m.cols();
+		byte[] data = new byte[rows*cols];
+		long[] retSums = null;
+		
+		int status = m.get(0, 0,data);
+		
+		long total = 0;
+		for (int k=0;k<data.length;k++) {
+			total += Byte.toUnsignedInt(data[k]);
+		}
+		if (byRow) {
+			retSums = new long[cols];
+			for (int col=0;col<cols;col++) {
+				retSums[col] = 0;
+				for (int row=0;row<rows;row++) {
+					int k = row*cols+col;
+					retSums[col] += Byte.toUnsignedInt(data[k]);
+				}
+  			}
+  		}
+  		else {
+  			retSums = new long[rows];
+  			for (int row=0;row<rows;row++) {
+  				retSums[row] = 0;
+  				for (int col=0;col<cols;col++) {
+  					int k = row*cols+col;
+  					retSums[row] += Byte.toUnsignedInt(data[k]);
+  				}
+  			}
+  		}
+		
+		int total1 = 0;
+		for (int k=0; k < retSums.length; k++) {
+			total1 += retSums[k];
+		}
+	
+		return retSums;
+	}
+	
+	/**
+	 * Peak information storage struct
+	 */
+	private static class PeakLoc {
+		private long start;
+		private long stop;
+		private boolean truePeak;
+		public PeakLoc(long start, long stop, boolean truePeak) {
+			super();
+			this.start = start;
+			this.stop = stop;
+			this.truePeak = truePeak;
+		}
+		public long getStart() {
+			return start;
+		}
+		public long getStop() {
+			return stop;
+		}		
+		public boolean isTruePeak() {
+			return this.truePeak;
+		}
+		
+		@SuppressWarnings("unused")
+		public void print() {
+			System.out.println("Peak Range: " + this.getStart() + " - " + this.getStop());
+		}
+	}
+	
+	/**
+	 * Finds value spikes in an array 
+	 * @param sums the array of values
+	 * @param minWidth the minimum number of pixels wide the spike needs to be to be considered a peak
+	 * @return a list of peak information
+	 */
+	private static List<PeakLoc> findPeaks(long[] sums,long minWidth) {
+		long maxVal = Arrays.stream(sums).max().getAsLong();
+		ArrayList<PeakLoc> ret = new ArrayList<PeakLoc>();
+		boolean looking = true;
+		long start = 0;
+		
+		for (int k=0; k < sums.length;k++) {
+			if (looking){
+				if ((sums[k]) > (maxVal/2)){
+					looking = false;
+					start = k;
+				}
+			}
+			else{
+				if ((sums[k]) < (maxVal/4)){
+					looking = true;
+					long width = (k-1)-start;
+					if (width >= minWidth) {
+					    ret.add(new PeakLoc(start, k-1, start == 0));
+					}
+				}
+			}
+			
+		}
+		if (looking == false){
+			ret.add(new PeakLoc(start, sums.length - 1, false));
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Finds value spikes in an array, assumes a minimum of 3 pixels wide for a spike to be considered a peak
+	 * @param sums the array of values
+	 * @return a list of peak information
+	 */
+	private static List<PeakLoc> findPeaks(long[] sums) {
+		return findPeaks(sums, 3);
+	}
+	
+	/**
+	 * Container struct for all target information including position, which target type,
+	 * if the target was found, and how much the robot needs to rotate to center the target
+	 */
+	public static class TargetInformation
+	{
+		public boolean targetingPeg = true; //false targets high goal
+		public boolean targetFound = false;
+		public long x = 0; //pixels from left of image
+		public long y = 0; //pixels from top of image
+		public long height = 0; //height of target in pixels
+		public long width = 0; //width of target in pixels
+		public long gap = 0; //gap between peaks in pixels
+		public double aimX = 0; //xPos to center in camera
+		public double correctionAngle = 0; //how many degrees the robot needs to rotate to center target
+		
+		public void add(TargetInformation other)
+		{
+			if (this.targetingPeg == other.targetingPeg)
+			{
+				this.x += other.x;
+				this.y += other.y;
+				this.height += other.y;
+				this.width += other.width;
+				this.gap += other.gap;
+				this.aimX += other.aimX;
+				this.correctionAngle += other.correctionAngle;
+			}
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private void saveProcessedImage(Mat m) {
+		if (Double.parseDouble(theProperties.getProperty("SaveProcessed", "0.0")) > 0.5) {
+			Date now = new Date();
+			if (now.getTime() - m_lastSnapshotTime.getTime() >= Double.parseDouble(theProperties.getProperty("MilliSecsBetweenPics"))) {
+				String fileName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS").format(now);
+				Imgcodecs.imwrite("C:/StrongholdImages/Camera_" + fileName + ".jpg", m);
+				m_lastSnapshotTime = new Date();
+			}
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void saveRawImage(Mat m) {
+		if (Double.parseDouble(theProperties.getProperty("SaveRaw", "0.0")) > 0.5) {
+			Date now = new Date();
+			if (now.getTime() - m_lastRawSnapshotTime.getTime() >= 1000) {
+				String fileName = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS").format(now);
+				Imgcodecs.imwrite("C:/StrongholdRawImages/Camera_" + fileName + ".jpg", m);
+				m_lastRawSnapshotTime = new Date();
+			}
+		}
 	}
 
 }

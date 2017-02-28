@@ -3,13 +3,8 @@ package org.usfirst.frc.team138.robot.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
-
 import com.ctre.CANTalon;
-
 import org.usfirst.frc.team138.robot.RobotMap;
-
-import edu.wpi.first.wpilibj.CANJaguar;
-import edu.wpi.first.wpilibj.Encoder;
 
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
@@ -24,14 +19,6 @@ public class Drivetrain extends Subsystem{
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
-		
-//		CANJaguar frontLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-//		CANJaguar backLeftJaguar = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-//		CANJaguar frontRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-//		CANJaguar backRightJaguar = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
-//	
-//		drivetrain = new RobotDrive(frontLeftJaguar, backLeftJaguar,
-//				frontRightJaguar, backRightJaguar);
 		
 		setDefaultCommand(new TeleopDrive());
 	}

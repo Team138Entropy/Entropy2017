@@ -10,9 +10,8 @@ public class AutoGearPlace extends CommandGroup {
 		requires(Robot.drivetrain);
 		this.setInterruptible(false);
 		
-		//Gear peg vision target is within FOV
-		//Vision system creates error function to steer robot to target
-		//Robot stops driving forward when acoustic rangefinder is les than threshold
+		addSequential(new GearCorrect(10));
+		//Robot stops driving forward when acoustic rangefinder is less than threshold
 		addSequential(new SetClawPosition(true));
 		addSequential(new PushGear());
 		addSequential(new PushGear());

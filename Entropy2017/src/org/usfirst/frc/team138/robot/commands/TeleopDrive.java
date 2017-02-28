@@ -1,7 +1,6 @@
 package org.usfirst.frc.team138.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import org.usfirst.frc.team138.robot.OI;
 import org.usfirst.frc.team138.robot.Robot;
 
 public class TeleopDrive extends Command{

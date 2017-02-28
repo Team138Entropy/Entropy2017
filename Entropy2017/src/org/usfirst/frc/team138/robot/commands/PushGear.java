@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class PushGear extends Command {
 
 	boolean isExtended;
-	boolean toggleMode = false;
+	boolean cycleMode = false;
 	
 	public PushGear(boolean extended){
 		requires(Robot.claw);
@@ -15,15 +15,15 @@ public class PushGear extends Command {
 	
 	public PushGear(){
 		requires(Robot.claw);
-		toggleMode = true;
+		cycleMode = true;
 	}
 
 	protected void initialize() {
-		if (toggleMode)
+		if (cycleMode)
 		{
-			isExtended = !Robot.claw.ramExtended();
+			isExtended = true;
 		}
-		if (!isExtended == Robot.claw.ramExtended() && Robot.claw.wristIsUp()) {
+		if (Robot.claw.wristIsUp() && Robot.claw.clawIsOpen()) {
 			if (isExtended){
 				Robot.claw.extendRam();
 			} else {
@@ -37,13 +37,17 @@ public class PushGear extends Command {
 	}
 
 	protected boolean isFinished() {
-		return true;
+		return !cycleMode;
 	}
 
 	protected void end() {
+		if (cycleMode){
+			Robot.claw.retractRam();
+		}
 	}
 
 	protected void interrupted() {
+		end();
 	}
 
 }
