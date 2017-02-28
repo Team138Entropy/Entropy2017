@@ -7,10 +7,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutoGearPlace extends CommandGroup {
 	
 	public AutoGearPlace() {
-		requires(Robot.drivetrain);
 		this.setInterruptible(false);
 		
-		addSequential(new GearCorrect(10));
+		addSequential(new VisionCorrect(true, 4));
 		//Robot stops driving forward when acoustic rangefinder is less than threshold
 		addSequential(new SetClawPosition(true));
 		addSequential(new PushGear());

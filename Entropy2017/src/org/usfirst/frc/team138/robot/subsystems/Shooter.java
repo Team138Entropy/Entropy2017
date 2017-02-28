@@ -21,7 +21,11 @@ public class Shooter extends Subsystem{
 		shooter.setSpeed(0.0);
 	}
 	
-	public void shoot(){
+	public void releaseGate(){
+		
+	}
+	
+	public void engageGate(){
 		
 	}
 

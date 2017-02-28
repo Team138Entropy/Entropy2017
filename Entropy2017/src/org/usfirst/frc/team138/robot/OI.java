@@ -14,13 +14,15 @@ public class OI {
     Joystick driverStick = new Joystick(0);
     Joystick operatorStick = new Joystick(1);
     
-    Button toggleGearRamButton = new JoystickButton(operatorStick, 1);
-    Button toggleChuteGuardButton = new JoystickButton(operatorStick, 4);
-    Button toggleWristButton = new JoystickButton(operatorStick, 5);
-    Button toggleClawButton = new JoystickButton(operatorStick, 6);
-    Button toggleRopeGrabberButton = new JoystickButton(operatorStick, 2);
-    Button shootButton = new JoystickButton(operatorStick, 7);
-    Button autoGearPlaceButton = new JoystickButton(operatorStick, 11);
+    Button toggleGearRamButton 			= new JoystickButton(operatorStick, 1);
+    Button toggleChuteGuardButton 		= new JoystickButton(operatorStick, 4);
+    Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
+    Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
+    Button toggleRopeGrabberButton 		= new JoystickButton(operatorStick, 2);
+    Button shootButton 					= new JoystickButton(operatorStick, 7);
+    Button autoPositionShooterButton 	= new JoystickButton(operatorStick, 9);
+    Button autoGearPlaceButton 			= new JoystickButton(operatorStick, 10);
+    Button cancelAutoRoutinesButton 	= new JoystickButton(operatorStick, 11);
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
@@ -29,7 +31,13 @@ public class OI {
     	toggleClawButton.whenPressed(new SetClawPosition());
     	toggleRopeGrabberButton.whenPressed(new GraspRope());
     	shootButton.whileHeld(new Shoot());
-    	autoGearPlaceButton.whenPressed(new GearCorrect(4));
+    	autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
+    	autoGearPlaceButton.whenPressed(new VisionCorrect(true, 4));
+    }
+    
+    public boolean autoRoutinesCancelled()
+    {
+    	return cancelAutoRoutinesButton.get();
     }
     
 	public double getMoveSpeed()

@@ -7,6 +7,13 @@ public class Shoot extends Command{
 	
 	public Shoot(){
 		requires(Robot.shooter);
+		setTimeout(10);
+	}
+	
+	public Shoot(double timeout)
+	{
+		requires(Robot.shooter);
+		setTimeout(timeout);
 	}
 
 	protected void initialize() {
@@ -14,14 +21,19 @@ public class Shoot extends Command{
 	}
 
 	protected void execute() {
+		if (timeSinceInitialized() > 0.3)
+		{
+			Robot.shooter.releaseGate();
+		}
 	}
 
 	protected boolean isFinished() {
-		return false;
+		return isTimedOut();
 	}
 
 	protected void end() {
 		Robot.shooter.stopShooter();
+		Robot.shooter.engageGate();
 	}
 
 	protected void interrupted() {

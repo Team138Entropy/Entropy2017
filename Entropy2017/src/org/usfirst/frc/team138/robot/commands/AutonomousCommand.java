@@ -5,15 +5,14 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class AutonomousCommand extends CommandGroup {
 
 	public AutonomousCommand(String team, String startPos, String autoMode){
-		// THE SPOKE IS UP
 		// Test Mode
 		if (autoMode == "test")
 		{
-			addSequential(new GearCorrect(4));
+			addSequential(new VisionCorrect(true, 4));
 			addSequential(new AutoDrive(5));
-			addSequential(new GearCorrect(4));
+			addSequential(new VisionCorrect(true, 4));
 			addSequential(new AutoDrive(5));
-			addSequential(new GearCorrect(4));
+			addSequential(new VisionCorrect(true, 4));
 		}
 		
 		// This auto mode crosses the line and that's it. This is the default
@@ -34,17 +33,20 @@ public class AutonomousCommand extends CommandGroup {
 		{
 			if (startPos == "left")
 			{
-				addSequential(new AutoDrive(0.7, 84));
 				if (team == "red")
 				{
+					addSequential(new AutoDrive(0.75, 84));
 					addSequential(new AutoDrive(52.5));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 12));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(-52.5));
+					addSequential(new AutoDrive(0.75, 86));
+					addSequential(new AutoDrive(52.5));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 13));
 				}
-				addSequential(new GearCorrect(4));
-				addSequential(new AutoDrive(0.6, 12));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.2));
@@ -55,8 +57,8 @@ public class AutonomousCommand extends CommandGroup {
 			}
 			if (startPos == "middle")
 			{
-				addSequential(new AutoDrive(0.7, 40));
-				addSequential(new GearCorrect(4));
+				addSequential(new AutoDrive(0.75, 40));
+				addSequential(new VisionCorrect(true, 4));
 				addSequential(new AutoDrive(0.6, 29));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -68,17 +70,20 @@ public class AutonomousCommand extends CommandGroup {
 			}
 			if (startPos == "right")
 			{
-				addSequential(new AutoDrive(0.75, 86));
 				if (team == "red")
 				{
+					addSequential(new AutoDrive(0.75, 86));
 					addSequential(new AutoDrive(-52.5));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 13));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(52.5));
+					addSequential(new AutoDrive(0.75, 84));
+					addSequential(new AutoDrive(-52.5));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 12));
 				}
-				addSequential(new GearCorrect(4));
-				addSequential(new AutoDrive(0.6, 13));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.2));
@@ -95,32 +100,34 @@ public class AutonomousCommand extends CommandGroup {
 				{
 					if (startPos == "right")
 					{
-						addSequential(new AutoDrive(-0.5, 10));
-						// Correct Rotation
-						// Shoot
+						addSequential(new AutoDrive(-0.75, 10));
+						addSequential(new AutoDrive(40));
+						addSequential(new VisionCorrect(false, 4));
+						addSequential(new Shoot(6));
 					}
 					if (startPos == "middle")
 					{
-						addSequential(new AutoDrive(-0.5, 10));
-						addSequential(new AutoDrive(90));
-						// Correct Rotation
-						// Shoot
+						addSequential(new AutoDrive(-0.75, 10));
+						addSequential(new AutoDrive(-75));
+						addSequential(new VisionCorrect(false, 4));
+						addSequential(new Shoot(6));
 					}
 				}
 				if (team == "blue")
 				{
 					if (startPos == "left")
 					{
-						addSequential(new AutoDrive(-0.5, 10));
-						// Correct Rotation
-						// Shoot
+						addSequential(new AutoDrive(-0.75, 10));
+						addSequential(new AutoDrive(-40));
+						addSequential(new VisionCorrect(false, 4));
+						addSequential(new Shoot(6));
 					}
 					if (startPos == "middle")
 					{
-						addSequential(new AutoDrive(-0.5, 10));
-						addSequential(new AutoDrive(-90));
-						// Correct Rotation
-						// Shoot
+						addSequential(new AutoDrive(-0.75, 10));
+						addSequential(new AutoDrive(75));
+						addSequential(new VisionCorrect(false, 4));
+						addSequential(new Shoot(6));
 					}
 				}
 			}
