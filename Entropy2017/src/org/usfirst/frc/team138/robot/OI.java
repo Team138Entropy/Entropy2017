@@ -24,6 +24,8 @@ public class OI {
     Button autoGearPlaceButton 			= new JoystickButton(operatorStick, 10);
     Button cancelAutoRoutinesButton 	= new JoystickButton(operatorStick, 11);
     
+    Button driverAutoGearButton 		= new JoystickButton(driverStick, 4);
+    
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
     	toggleChuteGuardButton.whenPressed(new SetGuardPosition());
@@ -33,6 +35,8 @@ public class OI {
     	shootButton.whileHeld(new Shoot());
     	autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
     	autoGearPlaceButton.whenPressed(new VisionCorrect(true, 4));
+    	
+    	driverAutoGearButton.whenPressed(new VisionCorrect(true, 4));
     }
     
     public boolean autoRoutinesCancelled()
