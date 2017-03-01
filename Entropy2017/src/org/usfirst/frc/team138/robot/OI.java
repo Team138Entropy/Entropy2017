@@ -15,7 +15,7 @@ public class OI {
     Joystick operatorStick = new Joystick(1);
     
     Button toggleGearRamButton 			= new JoystickButton(operatorStick, 1);
-    Button toggleChuteGuardButton 		= new JoystickButton(operatorStick, 4);
+    Button floorAcquireButton	 		= new JoystickButton(operatorStick, 4);
     Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
     Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
     Button toggleRopeGrabberButton 		= new JoystickButton(operatorStick, 2);
@@ -28,7 +28,7 @@ public class OI {
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
-    	toggleChuteGuardButton.whenPressed(new SetGuardPosition());
+    	floorAcquireButton.whenPressed(new FloorAcquire());
     	toggleWristButton.whenPressed(new SetWristPosition());
     	toggleClawButton.whenPressed(new SetClawPosition());
     	toggleRopeGrabberButton.whenPressed(new GraspRope());
