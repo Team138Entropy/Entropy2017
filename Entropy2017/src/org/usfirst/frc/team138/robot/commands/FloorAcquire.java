@@ -6,7 +6,6 @@ public class FloorAcquire extends CommandGroup{
 	
 	public FloorAcquire(){
 		addSequential(new SetWristPosition(false));
-		addSequential(new AutoDrive(0.8, 3));
 		addSequential(new SetClawPosition(true));
 	}
 

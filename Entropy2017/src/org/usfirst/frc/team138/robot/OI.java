@@ -34,7 +34,7 @@ public class OI {
     	toggleRopeGrabberButton.whenPressed(new GraspRope());
     	shootButton.whileHeld(new Shoot());
     	autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
-    	autoGearPlaceButton.whenPressed(new VisionCorrect(true, 4));
+    	autoGearPlaceButton.whenPressed(new VisionCorrect2Step(4));
     	
     	driverAutoGearButton.whenPressed(new VisionCorrect(true, 4));
     }

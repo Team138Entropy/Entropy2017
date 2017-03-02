@@ -141,8 +141,13 @@ public class AutoDrive extends Command implements PIDOutput{
 				{
 					if (stallCounter == 50) 
 					{
-						isDone = true;
+						turnController.setSetpoint(2);
+						//isDone = true;
 						//areMotorsStalled = true;
+					}
+					if(stallCounter == 100)
+					{
+						isDone = true;
 					}
 					stallCounter++;
 				}

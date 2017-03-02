@@ -23,8 +23,9 @@ public class Entropy2017Targeting extends Thread {
 	public static final boolean DEBUG_ENABLED = false;
 	
 	// Constants to find correction angle
-	private static final double pixelsPerDegree = 17.0;
-	private static final double cameraOffsetInches = -5.1;
+	public static final double pixelsPerXDegree = 17.0;
+	public static final double pixelsPerYDegree = 17.0;
+	private static final double cameraOffsetInches = -9.5;// -5.1
 	private static final double shooterOffsetInches = 12;
 	private static final double pegGapInches = 6.25;
 	private static final double pegWidthInches = 10.25;
@@ -364,19 +365,13 @@ public class Entropy2017Targeting extends Thread {
 	    	ret.width = xpeaks.get(1).getStop() - xpeaks.get(0).getStart();
 	    	ret.height = ypeaks.get(0).getStop() - ypeaks.get(0).getStart();
 	    	ret.y = ypeaks.get(0).getStart() + ret.height/2;
+	    	ret.rightOfTarget = xpeaks.get(0).maxValue < xpeaks.get(1).maxValue;
 	    	
-    		double pixelsPerInch = ret.gap / pegGapInches;
-	    	if (xpeaks.get(0).isTruePeak() && xpeaks.get(1).isTruePeak())
-	    	{
-	    		pixelsPerInch = (pixelsPerInch + ret.width / pegWidthInches) / 2;
-	    	}
-	    	if (ypeaks.get(0).isTruePeak())
-	    	{
-	    		pixelsPerInch = (pixelsPerInch + ret.width / pegHeightInches) / 2;
-	    	}	    	
-	    	ret.aimX = ret.x + cameraOffsetInches * pixelsPerInch;
+    		ret.pixelsPerInch = ret.height / pegHeightInches;
+    		
+	    	ret.aimX = ret.x + cameraOffsetInches * ret.pixelsPerInch;
 	    	
-	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerDegree;
+	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerXDegree;
 	    }
 	    else
 	    {
@@ -431,7 +426,7 @@ public class Entropy2017Targeting extends Thread {
 	    	
 	    	ret.aimX = ret.x + (cameraOffsetInches - shooterOffsetInches) * pixelsPerInch;
 	    	
-	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerDegree;
+	    	ret.correctionAngle = (double)((ret.aimX - image.cols() / 2)) / pixelsPerXDegree;
 	    }
 	    else
 	    {
@@ -515,11 +510,13 @@ public class Entropy2017Targeting extends Thread {
 		private long start;
 		private long stop;
 		private boolean truePeak;
-		public PeakLoc(long start, long stop, boolean truePeak) {
+		private double maxValue;
+		public PeakLoc(long start, long stop, boolean truePeak, double maxValue) {
 			super();
 			this.start = start;
 			this.stop = stop;
 			this.truePeak = truePeak;
+			this.maxValue = maxValue;
 		}
 		public long getStart() {
 			return start;
@@ -548,6 +545,7 @@ public class Entropy2017Targeting extends Thread {
 		ArrayList<PeakLoc> ret = new ArrayList<PeakLoc>();
 		boolean looking = true;
 		long start = 0;
+		long maxPeakValue = 0;
 		
 		for (int k=0; k < sums.length;k++) {
 			if (looking){
@@ -557,18 +555,23 @@ public class Entropy2017Targeting extends Thread {
 				}
 			}
 			else{
+				if (maxPeakValue < sums[k])
+				{
+					maxPeakValue = sums[k];
+				}
 				if ((sums[k]) < (maxVal/4)){
 					looking = true;
 					long width = (k-1)-start;
 					if (width >= minWidth) {
-					    ret.add(new PeakLoc(start, k-1, start == 0));
+					    ret.add(new PeakLoc(start, k-1, start == 0, maxPeakValue / maxVal));
+					    maxPeakValue = 0;
 					}
 				}
 			}
 			
 		}
 		if (looking == false){
-			ret.add(new PeakLoc(start, sums.length - 1, false));
+			ret.add(new PeakLoc(start, sums.length - 1, false, maxPeakValue / maxVal));
 		}
 		
 		return ret;
@@ -591,16 +594,22 @@ public class Entropy2017Targeting extends Thread {
 	{
 		public boolean targetingPeg = true; //false targets high goal
 		public boolean targetFound = false;
+		public boolean rightOfTarget = false;
 		public long x = 0; //pixels from left of image
 		public long y = 0; //pixels from top of image
 		public long height = 0; //height of target in pixels
 		public long width = 0; //width of target in pixels
-		public long gap = 0; //gap between peaks in pixels
+		public double gap = 0; //gap between peaks in pixels
 		public double aimX = 0; //xPos to center in camera
 		public double correctionAngle = 0; //how many degrees the robot needs to rotate to center target
+		public double pixelsPerInch = 0;
 		
 		public void add(TargetInformation other)
 		{
+			if (x == 0)
+			{
+				this.rightOfTarget = other.rightOfTarget;
+			}
 			if (this.targetingPeg == other.targetingPeg)
 			{
 				this.x += other.x;
@@ -610,7 +619,20 @@ public class Entropy2017Targeting extends Thread {
 				this.gap += other.gap;
 				this.aimX += other.aimX;
 				this.correctionAngle += other.correctionAngle;
+				this.pixelsPerInch += other.pixelsPerInch;
 			}
+		}
+		
+		public void divideAll(double divisor)
+		{
+			this.x /= divisor;
+			this.y /= divisor;
+			this.height /= divisor;
+			this.width /= divisor;
+			this.gap /= divisor;
+			this.aimX /= divisor;
+			this.correctionAngle /= divisor;
+			this.pixelsPerInch /= divisor;
 		}
 	}
 

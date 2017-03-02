@@ -47,6 +47,7 @@ public class VisionCorrect extends Command {
 		{
 			if (driveCommand == null)
 			{
+				Robot.drivetrain.drive(0, 0);
 				infoList.addAll(Sensors.cameraProcessor.getTargetInformation());
 				if (infoList.size() == framesToAverage)
 				{
