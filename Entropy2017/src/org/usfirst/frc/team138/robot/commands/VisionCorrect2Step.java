@@ -69,8 +69,9 @@ public class VisionCorrect2Step extends Command {
 					if (targetsFound > 0)
 					{
 						cumulation.divideAll(targetsFound);
-						double distanceFromTarget = 5 / Math.tan(cumulation.height / Entropy2017Targeting.pixelsPerYDegree);
-						double angle = Math.acos((6.25 / 5) * (cumulation.height / cumulation.gap));
+						double degreesPerRadian = 57.2958;
+						double distanceFromTarget = 5 / Math.tan((cumulation.height / Entropy2017Targeting.pixelsPerYDegree) / degreesPerRadian);
+						double angle = Math.acos((cumulation.gap * cumulation.pixelsPerInch) / 6.25) * degreesPerRadian;
 						if (cumulation.rightOfTarget)
 						{
 							driveCommandPart1 = new AutoDrive(cumulation.correctionAngle - angle);
@@ -80,7 +81,7 @@ public class VisionCorrect2Step extends Command {
 							driveCommandPart1 = new AutoDrive(cumulation.correctionAngle + angle);
 						}
 						
-						driveCommandPart2 = new AutoDrive(0.75, (distanceFromTarget * 0.5) / Math.cos(angle));
+						driveCommandPart2 = new AutoDrive(0.75, (distanceFromTarget * 0.5) / Math.cos(angle / degreesPerRadian));
 						if (cumulation.rightOfTarget)
 						{
 							driveCommandPart3 = new AutoDrive(90 - angle);
@@ -106,6 +107,7 @@ public class VisionCorrect2Step extends Command {
 			}
 			else
 			{
+				System.out.println("Vision Correction Step: " + currentPart);
 				if (currentPart == 1)
 				{
 					driveCommandPart1.execute();
@@ -124,7 +126,7 @@ public class VisionCorrect2Step extends Command {
 						currentPart = 3;
 					}
 				}
-				if (currentPart == 3)
+				else if (currentPart == 3)
 				{
 					driveCommandPart3.execute();
 					if (driveCommandPart3.isFinished())
