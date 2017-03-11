@@ -25,6 +25,7 @@ public class VisionCorrect extends Command {
 	}
 
 	protected void initialize() {
+		Robot.claw.stopCompressor();
 		Sensors.cameraProcessor.processFrames(framesToAverage, processingForPeg);
 		isDone = false;
 		driveCommand = null;
@@ -103,6 +104,7 @@ public class VisionCorrect extends Command {
 	}
 
 	protected void end() {
+		Robot.claw.startCompressor();
 		Sensors.cameraProcessor.cancelProcessing();
 		infoList.clear();
 		

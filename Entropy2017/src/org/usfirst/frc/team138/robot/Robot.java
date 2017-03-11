@@ -42,6 +42,7 @@ public class Robot extends IterativeRobot {
     	// Interface
 		oi = new OI();
 		Sensors.initialize();
+		Sensors.gearPlaceTiltAngle();
 		
 		// Smart Dashboard Initialization
 		Sensors.updateSmartDashboard();

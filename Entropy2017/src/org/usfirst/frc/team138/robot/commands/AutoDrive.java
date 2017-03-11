@@ -120,7 +120,7 @@ public class AutoDrive extends Command implements PIDOutput{
 			}
 			else
 			{
-				result = (Math.abs(Sensors.getLeftDistance()) + Math.abs(Sensors.getRightDistance())) / 2 >= driveDistance;
+				result = (Math.abs(Sensors.getLeftDistance()) >= driveDistance) || (Math.abs(Sensors.getRightDistance()) >= driveDistance);
 			}
 			if (result)
 			{
@@ -139,13 +139,13 @@ public class AutoDrive extends Command implements PIDOutput{
 				
 				if (lastRightDistance == Sensors.getRightDistance() || lastLeftDistance == Sensors.getLeftDistance()) 
 				{
-					if (stallCounter == 50) 
+					if (stallCounter == 25) 
 					{
 						turnController.setSetpoint(2);
 						//isDone = true;
 						//areMotorsStalled = true;
 					}
-					if(stallCounter == 100)
+					if(stallCounter == 50)
 					{
 						isDone = true;
 					}

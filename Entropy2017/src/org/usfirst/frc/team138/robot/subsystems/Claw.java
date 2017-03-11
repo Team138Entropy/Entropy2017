@@ -23,6 +23,16 @@ public class Claw extends Subsystem{
 	protected void initDefaultCommand() {
 	}
 	
+	public void stopCompressor()
+	{
+		compressor.stop();
+	}
+	
+	public void startCompressor()
+	{
+		compressor.start();
+	}
+	
 	public void extendRam(){
 		ramSolenoid.set(true);
 		ramExtended = true;

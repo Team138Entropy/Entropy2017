@@ -22,7 +22,7 @@ public class Climb extends Command{
 		}
 		else if(Robot.oi.getClimbSpeed() < -threshold)
 		{
-			Robot.climbingMechanism.setSpeed(-RobotMap.ROPE_CLIMB_SPEED);
+			Robot.climbingMechanism.setSpeed(RobotMap.ROPE_PULSE_SPEED);
 		}
 		else
 		{

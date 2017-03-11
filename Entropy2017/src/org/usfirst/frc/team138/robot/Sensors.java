@@ -16,7 +16,7 @@ public class Sensors {
 	static Encoder rightEncoder;
 	
 	static UsbCamera gearCamera;
-	//static Servo gearCameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
+	static Servo gearCameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
 	static Relay gearCameraLight = new Relay(RobotMap.GEAR_CAMERA_LIGHT_PORT);
 	static UsbCamera ropeAndShooterCamera;
 	public static Entropy2017Targeting cameraProcessor;
@@ -98,12 +98,13 @@ public class Sensors {
 	
 	public static void gearAcqTiltAngle()
 	{
-		//gearCameraServo.set(0.0);
+		System.out.println(gearCameraServo.get());
+		gearCameraServo.set(0.65);
 	}
 	
 	public static void gearPlaceTiltAngle()
 	{
-		//gearCameraServo.set(0.2);
+		gearCameraServo.set(0.35);
 	}
 	
 	public static double getLeftDistance() {

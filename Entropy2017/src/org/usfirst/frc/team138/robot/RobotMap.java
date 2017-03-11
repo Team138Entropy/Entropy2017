@@ -18,8 +18,8 @@ public class RobotMap {
 	public final static int CAMERA_TILT_PORT = 5;
 	public final static int FUEL_CONVEYER_PORT = 7;
 	public final static int FUEL_SHOOTER_WHEEL_PORT = 9;
-	public final static double ROPE_ACQ_SPEED = 0.3;
-	public final static double ROPE_CLIMB_SPEED = 0.8;
+	public final static double ROPE_PULSE_SPEED = 0.6;
+	public final static double ROPE_CLIMB_SPEED = 1.0;
 	public final static double FUEL_CONVEYER_SPEED = 0.5;
 	public final static double FUEL_ACQ_SPEED = -0.5;
 	public final static double FUEL_SHOOT_SPEED = 0.8;

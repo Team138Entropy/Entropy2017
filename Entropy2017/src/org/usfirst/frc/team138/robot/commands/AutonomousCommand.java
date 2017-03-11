@@ -35,22 +35,22 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 84));
+					addSequential(new AutoDrive(0.75, 88));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 12));
+					addSequential(new AutoDrive(0.6, 19));
 				}
 				if (team == "blue")
 				{
 					addSequential(new AutoDrive(0.75, 86));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 13));
+					addSequential(new AutoDrive(0.6, 20));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.2));
-				addSequential(new AutoDrive(-0.7, 15));
+				addSequential(new AutoDrive(-0.7, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
@@ -75,19 +75,19 @@ public class AutonomousCommand extends CommandGroup {
 					addSequential(new AutoDrive(0.75, 86));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 13));
+					addSequential(new AutoDrive(0.6, 20));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(0.75, 84));
+					addSequential(new AutoDrive(0.75, 88));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 12));
+					addSequential(new AutoDrive(0.6, 19));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.2));
-				addSequential(new AutoDrive(-0.7, 15));
+				addSequential(new AutoDrive(-0.7, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
