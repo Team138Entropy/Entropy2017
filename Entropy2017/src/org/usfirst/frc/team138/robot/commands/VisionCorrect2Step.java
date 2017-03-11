@@ -7,6 +7,12 @@ import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
 
 import edu.wpi.first.wpilibj.command.Command;
 
+// This command attempts to do some geometry on the image
+// estimating distance to target and the angle away from the
+// axis of the peg. Calculates turn and move distance to
+// drive to a point that is on the axis then another turn to
+// point directly towards the target.
+
 public class VisionCorrect2Step extends Command {
 	
 	AutoDrive driveCommandPart1, driveCommandPart2, driveCommandPart3;
