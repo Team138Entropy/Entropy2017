@@ -1,6 +1,7 @@
 package org.usfirst.frc.team138.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 import com.ctre.CANTalon;
@@ -11,11 +12,18 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
-	protected void initDefaultCommand() {		
-		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+	protected void initDefaultCommand() {
+		// Code for the comp. bot
+		//CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		//CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		//CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		//CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		
+		// Code for John Snow
+		CANJaguar frontLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		CANJaguar backLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		CANJaguar frontRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		CANJaguar backRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
