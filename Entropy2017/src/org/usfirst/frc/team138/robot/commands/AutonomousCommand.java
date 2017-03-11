@@ -8,11 +8,12 @@ public class AutonomousCommand extends CommandGroup {
 		// Test Mode
 		if (autoMode == "test")
 		{
-			addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(5));
-			addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(5));
-			addSequential(new VisionCorrect(true, 4));
+			//addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(60));
+			addSequential(new AutoDrive(0.7, 25));
+			//addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(-60));
+			//addSequential(new VisionCorrect(true, 4));
 		}
 		
 		// This auto mode crosses the line and that's it. This is the default
