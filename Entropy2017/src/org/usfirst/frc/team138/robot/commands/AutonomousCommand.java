@@ -8,14 +8,9 @@ public class AutonomousCommand extends CommandGroup {
 		// Test Mode
 		if (autoMode == "test")
 		{
-			//addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(60));
-			addSequential(new AutoDrive(0.7, 25));
-			//addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(-60));
-			//addSequential(new VisionCorrect(true, 4));
+			addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(0.6, 6));
 		}
-		
 		// This auto mode crosses the line and that's it. This is the default
 		if (autoMode == "line")
 		{
@@ -36,17 +31,17 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 88));
-					addSequential(new AutoDrive(52.5));
+					addSequential(new AutoDrive(0.90, 84));
+					addSequential(new AutoDrive(70));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 19));
+					addSequential(new AutoDrive(0.75, 36));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(0.75, 86));
-					addSequential(new AutoDrive(52.5));
+					addSequential(new AutoDrive(0.90, 72));
+					addSequential(new AutoDrive(70));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 20));
+					addSequential(new AutoDrive(0.75, 36));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
