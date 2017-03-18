@@ -14,16 +14,16 @@ public class Drivetrain extends Subsystem{
 	
 	protected void initDefaultCommand() {
 		// Code for the comp. bot
-		//CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-		//CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-		//CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-		//CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
 		// Code for John Snow
-		CANJaguar frontLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
-		CANJaguar backLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
-		CANJaguar frontRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
-		CANJaguar backRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		//CANJaguar frontLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+		//CANJaguar backLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+		//CANJaguar frontRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+		//CANJaguar backRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
