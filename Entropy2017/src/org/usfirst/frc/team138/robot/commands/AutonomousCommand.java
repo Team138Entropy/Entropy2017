@@ -54,13 +54,6 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
-				
-			//driv to neutral zone after placement of peg (left)
-				addSequential(new AutoDrive(-0.7,22));
-				addSequential(new AutoDrive(120));
-				//make sure that this value ^^^ is equivelent to previous angle
-				addSequential(new AutoDrive(-0.7,300));
-				//can be reduced to avoid crashing into an opposing robot
 			}
 			if (startPos == "middle")
 			{
@@ -79,7 +72,7 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 86));
+					addSequential(new AutoDrive(0.75, 76));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.6, 20));
@@ -94,17 +87,12 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.2));
-				addSequential(new AutoDrive(-0.7, 20));
+				addSequential(new AutoDrive(-0.7, 24));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
-				
-				//driv to neutral zone after placement of peg (right)
-				addSequential(new AutoDrive(-0.7,22));
-				addSequential(new AutoDrive(120));
-				//make sure that this value ^^^ is equivelent to previous angle
-				addSequential(new AutoDrive(-0.7,300));
-				//can be reduced to avoid crashing into an opposing robot
+				addSequential(new AutoDrive(-120));
+				addSequential(new AutoDrive(-0.7,48));
 			}
 			
 			// This mode then shoots fuel into the goal depending on team and start position
