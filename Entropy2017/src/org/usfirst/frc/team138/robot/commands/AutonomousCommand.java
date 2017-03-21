@@ -8,8 +8,18 @@ public class AutonomousCommand extends CommandGroup {
 		// Test Mode
 		if (autoMode == "test")
 		{
+<<<<<<< HEAD
 			addSequential(new VisionCorrect(true, 4));
 			addSequential(new AutoDrive(0.6, 6));
+=======
+			//addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(90));
+			addSequential(new AutoDrive(0.75, 2));
+//			addSequential(new AutoDrive(0.7, 25));
+			//addSequential(new VisionCorrect(true, 4));
+//			addSequential(new AutoDrive(-60));
+			//addSequential(new VisionCorrect(true, 4));
+>>>>>>> branch 'master' of https://github.com/Team138Entropy/Entropy2017.git
 		}
 		// This auto mode crosses the line and that's it. This is the default
 		if (autoMode == "line")
@@ -31,17 +41,41 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
+<<<<<<< HEAD
 					addSequential(new AutoDrive(0.90, 84));
 					addSequential(new AutoDrive(70));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.75, 36));
+=======
+					
+					/*
+					 * 
+					 * Original
+					 * addSequential(new AutoDrive(0.65, 88));
+					addSequential(new AutoDrive(52.5));
+					//addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 19));
+					 * 
+					 */
+					addSequential(new AutoDrive(0.65, 78));
+					addSequential(new AutoDrive(56.5));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 21));
+>>>>>>> branch 'master' of https://github.com/Team138Entropy/Entropy2017.git
 				}
 				if (team == "blue")
 				{
+<<<<<<< HEAD
 					addSequential(new AutoDrive(0.90, 72));
 					addSequential(new AutoDrive(70));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.75, 36));
+=======
+					addSequential(new AutoDrive(0.70, 76));
+					addSequential(new AutoDrive(65));
+					//addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 22));
+>>>>>>> branch 'master' of https://github.com/Team138Entropy/Entropy2017.git
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -53,7 +87,23 @@ public class AutonomousCommand extends CommandGroup {
 			}
 			if (startPos == "middle")
 			{
-				addSequential(new AutoDrive(0.75, 40));
+				/*
+				 * Original Autonomous Granite State
+				 * 
+				 * addSequential(new AutoDrive(0.75, 40));
+				//addSequential(new VisionCorrect(true, 4));
+				addSequential(new AutoDrive(0.6, 29));
+				addSequential(new SetClawPosition(true));
+				addSequential(new PushGear(true));
+				addSequential(new Wait(0.2));
+				addSequential(new AutoDrive(-0.7, 15));
+				addSequential(new PushGear(false));
+				addSequential(new Wait(0.1));
+				addSequential(new SetClawPosition(false));
+				 * 
+				 */
+				
+				addSequential(new AutoDrive(0.65, 40));
 				addSequential(new VisionCorrect(true, 4));
 				addSequential(new AutoDrive(0.6, 29));
 				addSequential(new SetClawPosition(true));
@@ -68,16 +118,27 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 86));
-					addSequential(new AutoDrive(-52.5));
-					addSequential(new VisionCorrect(true, 4));
+					
+					/*
+					 * ORIGINAL GRANITE STATE WORKING
+					 * 
+					addSequential(new AutoDrive(0.65, 74.5));
+					addSequential(new AutoDrive(-54.0));
+					//addSequential(new VisionCorrect(true, 2));
+					addSequential(new AutoDrive(0.6, 20));
+					 * 
+					 */
+										
+					addSequential(new AutoDrive(0.65, 74.5));
+					addSequential(new AutoDrive(-54.0));
+					//addSequential(new VisionCorrect(true, 2));
 					addSequential(new AutoDrive(0.6, 20));
 				}
 				if (team == "blue")
 				{
 					addSequential(new AutoDrive(0.75, 88));
 					addSequential(new AutoDrive(-52.5));
-					addSequential(new VisionCorrect(true, 4));
+					//addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.6, 19));
 				}
 				addSequential(new SetClawPosition(true));
