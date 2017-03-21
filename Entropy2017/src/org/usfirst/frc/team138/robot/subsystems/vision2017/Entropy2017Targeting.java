@@ -25,7 +25,7 @@ public class Entropy2017Targeting extends Thread {
 	// Constants to find correction angle
 	public static final double pixelsPerXDegree = 17.0;
 	public static final double pixelsPerYDegree = 17.0;
-	private static final double cameraOffsetInches = -7.5;// -5.1
+	private static final double cameraOffsetInches = 0; // -5.1, -7.5
 	private static final double shooterOffsetInches = 12;
 	private static final double pegGapInches = 6.25;
 	private static final double pegWidthInches = 10.25;
