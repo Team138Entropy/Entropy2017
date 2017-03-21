@@ -1,6 +1,7 @@
 package org.usfirst.frc.team138.robot;
 
 import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
+import org.usfirst.frc.team138.robot.subsystems.DistanceSensor;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -15,11 +16,12 @@ public class Sensors {
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
 	
-	static UsbCamera gearCamera;
 	static Servo gearCameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
 	static Relay gearCameraLight = new Relay(RobotMap.GEAR_CAMERA_LIGHT_PORT);
 	static UsbCamera ropeAndShooterCamera;
+	static UsbCamera gearCamera;
 	public static Entropy2017Targeting cameraProcessor;
+	static DistanceSensor myDistanceSensor = new DistanceSensor();
 	
 	public static void initialize() {
         gyro = new ADXRS450_Gyro();
@@ -38,7 +40,7 @@ public class Sensors {
         
         ropeAndShooterCamera = CameraServer.getInstance().startAutomaticCapture("Rope and Shooter Feed", 1);
         ropeAndShooterCamera.setResolution(640, 480);
-        ropeAndShooterCamera.setFPS(12);
+        ropeAndShooterCamera.setFPS(2);
     	
     	cameraProcessor = new Entropy2017Targeting(gearCamera, ropeAndShooterCamera);
 		cameraProcessor.start();
@@ -160,5 +162,6 @@ public class Sensors {
 		SmartDashboard.putNumber("Left Encoder:", leftEncoder.getDistance());
 		SmartDashboard.putNumber("Right Encoder:", rightEncoder.getDistance());
 		SmartDashboard.putNumber("Angle:", gyro.getAngle());
+		SmartDashboard.putNumber("Distance:", myDistanceSensor.GetDistance());
 	}
 }

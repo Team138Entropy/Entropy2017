@@ -9,10 +9,12 @@ import org.usfirst.frc.team138.robot.RobotMap;
 
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
+	private static boolean ROBOT_USES_TALONS = false; // true = Talons, false = Jaguars
 	
 	RobotDrive drivetrain;
 	
 	protected void initDefaultCommand() {
+<<<<<<< HEAD
 		// Code for the comp. bot
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
 		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
@@ -27,6 +29,27 @@ public class Drivetrain extends Subsystem{
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
+=======
+		if (ROBOT_USES_TALONS == true) {
+			// ESCs on the comp. bot
+			final CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+			final CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+			final CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+			final CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+			
+			drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
+					frontRightTalon, backRightTalon);
+		} else {
+			// ESCs on John Snow
+			final CANJaguar frontLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
+			final CANJaguar backLeftTalon = new CANJaguar(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
+			final CANJaguar frontRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
+			final CANJaguar backRightTalon = new CANJaguar(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+			
+			drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
+					frontRightTalon, backRightTalon);
+		}
+>>>>>>> branch 'master' of https://github.com/Team138Entropy/Entropy2017
 		
 		setDefaultCommand(new TeleopDrive());
 	}
