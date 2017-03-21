@@ -9,7 +9,7 @@ import org.usfirst.frc.team138.robot.RobotMap;
 
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
-	private static boolean ROBOT_USES_TALONS = true; // true = Talons, false = Jaguars
+	private static boolean ROBOT_USES_TALONS = false; // true = Talons, false = Jaguars
 	
 	RobotDrive drivetrain;
 	
