@@ -54,6 +54,11 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
+				addSequential(new AutoDrive(-0.7,22));
+				addSequential(new AutoDrive(120));
+				//make sure that this value ^^^ is equivelent to previous angle
+				addSequential(new AutoDrive(-0.7,300));
+				//can be reduced to avoid crashing into an opposing robot
 			}
 			if (startPos == "middle")
 			{
@@ -91,6 +96,12 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
+				//driv to neutral zone after placement of peg (right)
+				addSequential(new AutoDrive(-0.7,22));
+				addSequential(new AutoDrive(120));
+				//make sure that this value ^^^ is equivelent to previous angle
+				addSequential(new AutoDrive(-0.7,300));
+				//can be reduced to avoid crashing into an opposing robot
 			}
 			
 			// This mode then shoots fuel into the goal depending on team and start position
