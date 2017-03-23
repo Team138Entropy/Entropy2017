@@ -33,7 +33,7 @@ public class Sensors {
     	resetEncoders();
     	
     	gearCamera = CameraServer.getInstance().startAutomaticCapture("Gear Feed", 0);
-        gearCamera.setResolution(640, 480);
+        gearCamera.setResolution(320, 240);
         gearCamera.setFPS(20);
         
         ropeAndShooterCamera = CameraServer.getInstance().startAutomaticCapture("Rope and Shooter Feed", 1);

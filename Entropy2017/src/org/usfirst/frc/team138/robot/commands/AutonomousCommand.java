@@ -35,14 +35,14 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 88));
+					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.6, 19));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(0.75, 86));
+					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.6, 20));
@@ -72,17 +72,17 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{
-					addSequential(new AutoDrive(0.75, 86));
+					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 20));
+					addSequential(new AutoDrive(0.6, 23));
 				}
 				if (team == "blue")
 				{
-					addSequential(new AutoDrive(0.75, 88));
+					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 19));
+					addSequential(new AutoDrive(0.6, 22));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
