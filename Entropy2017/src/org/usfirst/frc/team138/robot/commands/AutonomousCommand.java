@@ -1,5 +1,8 @@
 package org.usfirst.frc.team138.robot.commands;
 
+// BedfordBase branch started 2017-03-25 - jmcg
+// 1. Increase "advance to neutral zone" distance to 10 feet"
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonomousCommand extends CommandGroup {
@@ -91,14 +94,12 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
-				// Needs conditional
-				//driv to neutral zone after placement of peg (right)
+				// Brian says it does not need a conditional on the SmartDashboard;
+				// "just do it"
+				//drive to neutral zone after placement of peg (right)
      			addSequential(new AutoDrive(-0.7,22));
      			addSequential(new AutoDrive(-125));
-				//make sure that this value ^^^ is equivelent to previous angle
-				addSequential(new AutoDrive(-0.7, 80));
-				//can be reduced to avoid crashing into an opposing robot
-
+				addSequential(new AutoDrive(-0.7, 120));  // a timid 10 feet
 			}
 			
 			// This mode then shoots fuel into the goal depending on team and start position
