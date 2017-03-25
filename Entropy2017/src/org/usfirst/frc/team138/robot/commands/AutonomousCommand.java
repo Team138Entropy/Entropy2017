@@ -2,6 +2,7 @@ package org.usfirst.frc.team138.robot.commands;
 
 // BedfordBase branch started 2017-03-25 - jmcg
 // 1. Increase "advance to neutral zone" distance to 10 feet"
+// 2. Mirror "advance to neutral zone" for left starting position
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -57,6 +58,10 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
+				//drive to neutral zone after placement of peg (left)
+     			addSequential(new AutoDrive(-0.7,22));
+     			addSequential(new AutoDrive(125));
+				addSequential(new AutoDrive(-0.7, 120));  // a timid 10 feet
 			}
 			if (startPos == "middle")
 			{
