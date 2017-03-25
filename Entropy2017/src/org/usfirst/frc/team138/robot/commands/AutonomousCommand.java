@@ -4,6 +4,9 @@ package org.usfirst.frc.team138.robot.commands;
 // 1. Increase "advance to neutral zone" distance to 10 feet"
 // 2. Mirror "advance to neutral zone" for left starting position
 // 3. Mark which moves have been tested with competition robot on practice field
+// 4. Mirror dialed-in values from "Red" alliance positions to corresponding "Blue" positions
+// note that values from red-left end up in blue-right while red-right end up in blue-left
+// except for negating the turn angles
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -46,11 +49,11 @@ public class AutonomousCommand extends CommandGroup {
 					addSequential(new AutoDrive(0.6, 19));
 				}
 				if (team == "blue")
-				{
-					addSequential(new AutoDrive(0.60, 80));
+				{   // based on mirror of "red-right"
+					addSequential(new AutoDrive(0.75, 88));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 20));
+					addSequential(new AutoDrive(0.75, 23));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -87,11 +90,11 @@ public class AutonomousCommand extends CommandGroup {
 					addSequential(new AutoDrive(0.6, 23));
 				}
 				if (team == "blue")
-				{
-					addSequential(new AutoDrive(0.75, 80));
+				{   // based on mirror of "red left"
+					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 22));
+					addSequential(new AutoDrive(0.6, 19));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
