@@ -3,6 +3,7 @@ package org.usfirst.frc.team138.robot.commands;
 // BedfordBase branch started 2017-03-25 - jmcg
 // 1. Increase "advance to neutral zone" distance to 10 feet"
 // 2. Mirror "advance to neutral zone" for left starting position
+// 3. Mark which moves have been tested with competition robot on practice field
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -38,7 +39,7 @@ public class AutonomousCommand extends CommandGroup {
 			if (startPos == "left")
 			{
 				if (team == "red")
-				{
+				{   // tested with competition robot on practice field
 					addSequential(new AutoDrive(0.60, 80));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
@@ -64,7 +65,7 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new AutoDrive(-0.7, 120));  // a timid 10 feet
 			}
 			if (startPos == "middle")
-			{
+			{   // tested with competition robot on practice field
 				addSequential(new AutoDrive(0.75, 40));
 				addSequential(new VisionCorrect(true, 4));
 				addSequential(new AutoDrive(0.6, 29));
@@ -79,7 +80,7 @@ public class AutonomousCommand extends CommandGroup {
 			if (startPos == "right")
 			{
 				if (team == "red")
-				{
+				{   // tested with competition robot on practice field
 					addSequential(new AutoDrive(0.75, 88));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
