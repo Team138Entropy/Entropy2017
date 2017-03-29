@@ -16,7 +16,7 @@ public class RobotMap {
 	// PWM
 	public final static int ROPE_CLIMBING_WINCH_PORT = 0;
 	public final static int CAMERA_TILT_PORT = 5;
-	public final static int FUEL_CONVEYOR_PORT = 7;
+	public final static int FUEL_CONVEYER_PORT = 7;
 	public final static int FUEL_SHOOTER_WHEEL_PORT = 9;
 	public final static double ROPE_PULSE_SPEED = 0.6;
 	public final static double ROPE_CLIMB_SPEED = 1.0;

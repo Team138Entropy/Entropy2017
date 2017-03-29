@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj.CameraServer;
 
 /**
  * Vision processing thread to look for gear placement pegs and high goal targets in the
- * FIRST Robotics 2017 competition, STEAMWORKS
+ * FIRST Robotics 2017 competition, Steamworks
  * @author Team 138 Entropy
  *
  */
-
 public class Entropy2017Targeting extends Thread {
 	// DEBUG_ENABLED creates a debug stream on the SmartDashboard that draws the target, lagging for 12 frames
 	public static final boolean DEBUG_ENABLED = false;
@@ -26,7 +25,7 @@ public class Entropy2017Targeting extends Thread {
 	// Constants to find correction angle
 	public static final double pixelsPerXDegree = 17.0;
 	public static final double pixelsPerYDegree = 17.0;
-	private static final double cameraOffsetInches = 0;// -5.1
+	private static final double cameraOffsetInches = 0; // -5.1, -7.5
 	private static final double shooterOffsetInches = 12;
 	private static final double pegGapInches = 6.25;
 	private static final double pegWidthInches = 10.25;
@@ -38,7 +37,7 @@ public class Entropy2017Targeting extends Thread {
 	// Path for testing images from PC
 	private static String rootFolder = "C:\\Users\\Team138\\Vision2017";
 	
-	// These are necessary for something
+	// I don't know what these are necessary for but I'll leave them in anyway
 	private Date m_lastSnapshotTime;
 	private Date m_lastRawSnapshotTime;
 	@SuppressWarnings("unused")
@@ -65,7 +64,6 @@ public class Entropy2017Targeting extends Thread {
 	 * @param gearCam previously created gear camera
 	 * @param ropeAndShooterCam previously created rope and shooter camera
 	 */
-	
 	public Entropy2017Targeting(UsbCamera gearCam, UsbCamera ropeAndShooterCam) {
 		gearCamera = gearCam;
 		ropeAndShooterCamera = ropeAndShooterCam;

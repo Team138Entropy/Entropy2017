@@ -41,7 +41,6 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
     	// Interface
 		oi = new OI();
-		
 		Sensors.initialize();
 		Sensors.gearPlaceTiltAngle();
 		

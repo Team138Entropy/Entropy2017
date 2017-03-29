@@ -139,7 +139,7 @@ public class AutoDrive extends Command implements PIDOutput{
 				
 				if (lastRightDistance == Sensors.getRightDistance() || lastLeftDistance == Sensors.getLeftDistance()) 
 				{
-					if (stallCounter == 25 && !rotateInPlace) 
+					if (stallCounter == 25) 
 					{
 						turnController.setSetpoint(2);
 						//isDone = true;
@@ -177,7 +177,7 @@ public class AutoDrive extends Command implements PIDOutput{
 		output = -output;
 		if (rotateInPlace)
 		{
-			double minSpeed = 0.7; //COMPETITION: 0.7
+			double minSpeed = 0.7;
 			if (output > minSpeed|| output < -minSpeed)
 			{
 				rotateToAngleRate = output;

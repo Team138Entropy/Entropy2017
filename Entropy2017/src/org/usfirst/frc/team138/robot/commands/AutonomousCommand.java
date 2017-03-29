@@ -1,5 +1,13 @@
 package org.usfirst.frc.team138.robot.commands;
 
+// BedfordBase branch started 2017-03-25 - jmcg
+// 1. Increase "advance to neutral zone" distance to 10 feet"
+// 2. Mirror "advance to neutral zone" for left starting position
+// 3. Mark which moves have been tested with competition robot on practice field
+// 4. Mirror dialed-in values from "Red" alliance positions to corresponding "Blue" positions
+// note that values from red-left end up in blue-right while red-right end up in blue-left
+// except for negating the turn angles
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonomousCommand extends CommandGroup {
@@ -9,15 +17,12 @@ public class AutonomousCommand extends CommandGroup {
 		if (autoMode == "test")
 		{
 			addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(0.6, 6));
-			//addSequential(new VisionCorrect(true, 4));
-			addSequential(new AutoDrive(90));
-			addSequential(new AutoDrive(0.75, 2));
-//			addSequential(new AutoDrive(0.7, 25));
-			//addSequential(new VisionCorrect(true, 4));
-//			addSequential(new AutoDrive(-60));
-			//addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(5));
+			addSequential(new VisionCorrect(true, 4));
+			addSequential(new AutoDrive(5));
+			addSequential(new VisionCorrect(true, 4));
 		}
+		
 		// This auto mode crosses the line and that's it. This is the default
 		if (autoMode == "line")
 		{
@@ -37,69 +42,41 @@ public class AutonomousCommand extends CommandGroup {
 			if (startPos == "left")
 			{
 				if (team == "red")
-				{
-					addSequential(new AutoDrive(0.90, 84));
-					addSequential(new AutoDrive(70));
-					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.75, 36));
-					
-					/*
-					 * 
-					 * Original
-					 * addSequential(new AutoDrive(0.65, 88));
+				{   // tested with competition robot on practice field
+					addSequential(new AutoDrive(0.65, 96));
 					addSequential(new AutoDrive(52.5));
-					//addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 19));
-					 * 
-					 */
-					addSequential(new AutoDrive(0.65, 78));
-					addSequential(new AutoDrive(56.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 21));
+					addSequential(new AutoDrive(0.6, 29));
 				}
 				if (team == "blue")
-				{
-					addSequential(new AutoDrive(0.90, 72));
-					addSequential(new AutoDrive(70));
+				{   // based on mirror of "red-right"
+					addSequential(new AutoDrive(0.65, 96));
+					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.75, 36));
-					addSequential(new AutoDrive(0.70, 76));
-					addSequential(new AutoDrive(65));
-					//addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 22));
+					addSequential(new AutoDrive(0.65, 29));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
-				addSequential(new Wait(0.2));
+				addSequential(new Wait(0.5));
 				addSequential(new AutoDrive(-0.7, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
+				// drive to neutral zone after placement of peg (left)
+     			addSequential(new AutoDrive(-0.7,22));
+     			addSequential(new AutoDrive(125));
+				addSequential(new AutoDrive(-0.7, 175));
 			}
 			if (startPos == "middle")
-			{
-				/*
-				 * Original Autonomous Granite State
-				 * 
-				 * addSequential(new AutoDrive(0.75, 40));
-				//addSequential(new VisionCorrect(true, 4));
-				addSequential(new AutoDrive(0.6, 29));
+			{   // tested with competition robot on practice field
+				//addSequential(new AutoDrive(0.65, )); WIP
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
-				addSequential(new Wait(0.2));
-				addSequential(new AutoDrive(-0.7, 15));
+				addSequential(new Wait(0.5));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
-				addSequential(new SetClawPosition(false));
-				 * 
-				 */
-				
-				addSequential(new AutoDrive(0.65, 40));
-				addSequential(new VisionCorrect(true, 4));
-				addSequential(new AutoDrive(0.6, 29));
-				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
-				addSequential(new Wait(0.2));
+				addSequential(new Wait(0.5));
 				addSequential(new AutoDrive(-0.7, 15));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
@@ -108,42 +85,34 @@ public class AutonomousCommand extends CommandGroup {
 			if (startPos == "right")
 			{
 				if (team == "red")
-				{
-					addSequential(new AutoDrive(0.75, 76));
+				{   // tested with competition robot on practice field
+					addSequential(new AutoDrive(0.65, 96));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					
-					/*
-					 * ORIGINAL GRANITE STATE WORKING
-					 * 
-					addSequential(new AutoDrive(0.65, 74.5));
-					addSequential(new AutoDrive(-54.0));
-					//addSequential(new VisionCorrect(true, 2));
-					addSequential(new AutoDrive(0.6, 20));
-					 * 
-					 */
-										
-					addSequential(new AutoDrive(0.65, 74.5));
-					addSequential(new AutoDrive(-54.0));
-					//addSequential(new VisionCorrect(true, 2));
-					addSequential(new AutoDrive(0.6, 20));
+					addSequential(new AutoDrive(0.6, 29));
 				}
 				if (team == "blue")
-				{
-					addSequential(new AutoDrive(0.75, 88));
+				{   // based on mirror of "red left"
+					addSequential(new AutoDrive(0.65, 96));
 					addSequential(new AutoDrive(-52.5));
-					//addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 19));
+					addSequential(new VisionCorrect(true, 4));
+					addSequential(new AutoDrive(0.6, 29));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
-				addSequential(new Wait(0.2));
-				addSequential(new AutoDrive(-0.7, 24));
+				addSequential(new Wait(0.5));
+				addSequential(new PushGear(false));
+				addSequential(new Wait(0.1));
+				addSequential(new PushGear(true));
+				addSequential(new Wait(0.5));
+				addSequential(new AutoDrive(-0.7, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
-				addSequential(new AutoDrive(-120));
-				addSequential(new AutoDrive(-0.7,48));
+				// drive to neutral zone after placement of peg (right)
+     			addSequential(new AutoDrive(-0.7,22));
+     			addSequential(new AutoDrive(-125));
+				addSequential(new AutoDrive(-0.7, 175));
 			}
 			
 			// This mode then shoots fuel into the goal depending on team and start position
