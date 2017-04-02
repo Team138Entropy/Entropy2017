@@ -18,14 +18,14 @@ public class AutonomousCommand extends CommandGroup {
 		
 		// This auto mode crosses the line and that's it. This is the default
 		if (autoMode == "line")
-		{
+		{ // This code block has been used for autodrive testing
 			if (startPos == "middle")
 			{
-				addSequential(new AutoDrive(0.6, 65));
+				addSequential(new AutoDrive(0.9, 65));
 			}
 			else
 			{
-				addSequential(new AutoDrive(0.6, 90));
+				addSequential(new AutoDrive( 0.75, 100));
 			}
 		}
 		
