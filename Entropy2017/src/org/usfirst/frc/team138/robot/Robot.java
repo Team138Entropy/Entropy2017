@@ -42,7 +42,6 @@ public class Robot extends IterativeRobot {
     	// Interface
 		oi = new OI();
 		Sensors.initialize();
-		Sensors.gearPlaceTiltAngle();
 		
 		// Smart Dashboard Initialization
 		Sensors.updateSmartDashboard();
@@ -60,10 +59,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Starting Position:", startPosChooser);
 		
 		autoModeChooser = new SendableChooser<String>();
-		autoModeChooser.addDefault("Cross Line", "line");
-		autoModeChooser.addObject("Place Gear", "gear");
-		autoModeChooser.addObject("Place Gear and Shoot High", "gearAndShoot");
-		autoModeChooser.addObject("Place Gear and Release Hopper", "gearAndHopper");
+		autoModeChooser.addObject("Nothing", "DNE");
+		autoModeChooser.addDefault("Place Gear", "gear");
 		autoModeChooser.addObject("Test" , "test");
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
     }

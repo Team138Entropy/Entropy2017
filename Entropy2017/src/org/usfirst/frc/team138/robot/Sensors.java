@@ -16,9 +16,8 @@ public class Sensors {
 	static Encoder rightEncoder;
 	
 	static UsbCamera gearCamera;
-	static Servo gearCameraServo = new Servo(RobotMap.CAMERA_TILT_PORT);
-	static Relay gearCameraLight = new Relay(RobotMap.GEAR_CAMERA_LIGHT_PORT);
-	static UsbCamera ropeAndShooterCamera;
+	static Relay cameraLight = new Relay(RobotMap.GEAR_CAMERA_LIGHT_PORT);
+	static UsbCamera groundCamera;
 	public static Entropy2017Targeting cameraProcessor;
 	
 	public static void initialize() {
@@ -28,83 +27,44 @@ public class Sensors {
         
         leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
 		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
-    	leftEncoder.setDistancePerPulse(0.124);
-    	rightEncoder.setDistancePerPulse(0.124);
+    	leftEncoder.setDistancePerPulse(0.165);
+    	rightEncoder.setDistancePerPulse(0.165);
     	resetEncoders();
     	
     	gearCamera = CameraServer.getInstance().startAutomaticCapture("Gear Feed", 0);
         gearCamera.setResolution(320, 240);
         gearCamera.setFPS(20);
         
-        ropeAndShooterCamera = CameraServer.getInstance().startAutomaticCapture("Rope and Shooter Feed", 1);
-        ropeAndShooterCamera.setResolution(320, 240);
-        ropeAndShooterCamera.setFPS(5);
+        groundCamera = CameraServer.getInstance().startAutomaticCapture("Ground Feed", 1);
+        groundCamera.setResolution(320, 240);
+        groundCamera.setFPS(5);
     	
-    	cameraProcessor = new Entropy2017Targeting(gearCamera, ropeAndShooterCamera);
+    	cameraProcessor = new Entropy2017Targeting(gearCamera, groundCamera);
 		cameraProcessor.start();
 	}
 	
-	public static void turnOnCameraLight(boolean gear)
+	public static void setCameraLight(boolean on)
 	{
-		if (gear)
+		if (on)
 		{
-			gearCameraLight.set(Relay.Value.kForward);
+			cameraLight.set(Relay.Value.kForward);
 		}
 		else
 		{
-			gearCameraLight.set(Relay.Value.kForward);
+			cameraLight.set(Relay.Value.kOff);
 		}
 	}
 	
-	public static void turnOffCameraLight(boolean gear)
+	public static void targetingCameraMode()
 	{
-		if (gear)
-		{
-			gearCameraLight.set(Relay.Value.kOff);
-		}
-		else
-		{
-			gearCameraLight.set(Relay.Value.kOff);
-		}
+		gearCamera.setExposureManual(0);
+		gearCamera.setBrightness(0);
 	}
 	
-	public static void targetingCameraMode(boolean gear)
+	public static void standardCameraMode()
 	{
-		if (gear)
-		{
-			gearCamera.setExposureManual(0);
-	        gearCamera.setBrightness(0);
-		}
-		else
-		{
-			ropeAndShooterCamera.setExposureManual(0);
-			ropeAndShooterCamera.setBrightness(0);
-		}
-	}
-	
-	public static void standardCameraMode(boolean gear)
-	{
-		if (gear)
-		{
-			gearCamera.setBrightness(20);
-			gearCamera.setExposureAuto();
-		}
-		else
-		{
-			ropeAndShooterCamera.setBrightness(20);
-			ropeAndShooterCamera.setExposureAuto();
-		}
-	}
-	
-	public static void gearAcqTiltAngle()
-	{
-		System.out.println(gearCameraServo.get());
-		gearCameraServo.set(0.65);
-	}
-	
-	public static void gearPlaceTiltAngle()
-	{
-		gearCameraServo.set(0.35);
+		gearCamera.setBrightness(20);
+		gearCamera.setExposureAuto();
 	}
 	
 	public static double getLeftDistance() {

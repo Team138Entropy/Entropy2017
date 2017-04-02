@@ -34,11 +34,9 @@ public class SetWristPosition extends Command {
 				Robot.claw.guardUp();
 			}
 			if (isUp) {
-				Sensors.gearPlaceTiltAngle();
 				Robot.claw.wristUp();
 				setTimeout(0.3);
 			} else {
-				Sensors.gearAcqTiltAngle();
 				Robot.claw.wristDown();
 				setTimeout(0.0);
 			}

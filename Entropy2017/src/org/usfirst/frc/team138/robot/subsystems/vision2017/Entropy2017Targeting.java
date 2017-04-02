@@ -18,10 +18,7 @@ import edu.wpi.first.wpilibj.CameraServer;
  * @author Team 138 Entropy
  *
  */
-public class Entropy2017Targeting extends Thread {
-	// DEBUG_ENABLED creates a debug stream on the SmartDashboard that draws the target, lagging for 12 frames
-	public static final boolean DEBUG_ENABLED = false;
-	
+public class Entropy2017Targeting extends Thread {	
 	// Constants to find correction angle
 	public static final double pixelsPerXDegree = 17.0;
 	public static final double pixelsPerYDegree = 17.0;
@@ -45,33 +42,35 @@ public class Entropy2017Targeting extends Thread {
 	
 	// Camera Pointers
 	static UsbCamera gearCamera;
-	static UsbCamera ropeAndShooterCamera;
+	static UsbCamera groundCamera;
 
 	// Processing Variables
 	private Properties theProperties;
 	private ArrayList<TargetInformation> infoList = new ArrayList<TargetInformation>();
 	private CvSink pegSink;
-    private CvSink shooterSink;
+    private CvSink groundSink;
 	private int framesToProcess = 0;
 	private boolean processingForPeg = true;
 	private boolean cancelled = false;
 	private boolean done = false;
-	private Point lastKnownTarget = new Point();
-	private int frameLag = 0;
+	private boolean lookingAtGear = false;
 	
 	/**
 	 * Vision processing thread to look for gear placement pegs and high goal targets
 	 * @param gearCam previously created gear camera
 	 * @param ropeAndShooterCam previously created rope and shooter camera
 	 */
-	public Entropy2017Targeting(UsbCamera gearCam, UsbCamera ropeAndShooterCam) {
+	public Entropy2017Targeting(UsbCamera gearCam, UsbCamera groundCam) {
 		gearCamera = gearCam;
-		ropeAndShooterCamera = ropeAndShooterCam;
+		groundCamera = groundCam;
 		
-		if (gearCam != null && ropeAndShooterCam != null)
+		if (gearCam != null)
 		{
 			pegSink = CameraServer.getInstance().getVideo(gearCamera);
-	        shooterSink = CameraServer.getInstance().getVideo(ropeAndShooterCamera);
+		}
+		if (groundCam != null)
+		{
+	        groundSink = CameraServer.getInstance().getVideo(groundCamera);
 		}
 		m_lastSnapshotTime = new Date();
 		m_lastRawSnapshotTime = new Date();
@@ -97,79 +96,40 @@ public class Entropy2017Targeting extends Thread {
 	}
 	
 	public void run() {
-		if (pegSink == null || shooterSink == null)
+		if (pegSink == null || groundSink == null)
 		{
 			return;
 		}
-		if (DEBUG_ENABLED)
-		{
-			Sensors.turnOnCameraLight(true);
-			Sensors.turnOnCameraLight(false);
-		}
-		CvSource debugStream = CameraServer.getInstance().putVideo("Debug Stream", 640, 480);
-        Mat frame = new Mat();
+
+		Mat frame = new Mat();
         
         while(!done) {
-        	if (!DEBUG_ENABLED)
+        	synchronized(this)
         	{
-        		synchronized(this)
-            	{
-            		try {
-    					this.wait();
-    				} catch (InterruptedException e) {}
-    	        	try {
-    					this.wait(40);
-    				} catch (InterruptedException e) {}
-            	}
-            	
-            	while (framesToProcess > 0)
-            	{
-            		try
+        		try {
+					this.wait();
+				} catch (InterruptedException e) {}
+	        	try {
+					this.wait(40);
+				} catch (InterruptedException e) {}
+        	}
+        	
+        	while (framesToProcess > 0)
+        	{
+        		try
+        		{
+        			if (!cancelled)
             		{
-            			if (!cancelled)
+            			if (processingForPeg)
                 		{
-                			if (processingForPeg)
-                    		{
-                    			pegSink.grabFrame(frame);
-                    		}
-                    		else
-                    		{
-                    			shooterSink.grabFrame(frame);
-                    		}
-                            processImage(frame);
-                            System.out.println("Frame: " + framesToProcess);
-                            framesToProcess--;
+                			pegSink.grabFrame(frame);
                 		}
                 		else
                 		{
-                			framesToProcess = 0;
-                			getTargetInformation();
-                			cancelled = false;
+                			groundSink.grabFrame(frame);
                 		}
-            		}
-            		catch (Exception e)
-            		{
-            			System.out.println("failed somewhere in processing");
-            		}
-            	}
-            	Sensors.standardCameraMode(processingForPeg);
-            	Sensors.turnOffCameraLight(processingForPeg);
-        	}
-        	else
-        	{
-        		if (processingForPeg)
-        		{
-        			pegSink.grabFrame(frame);
-        		}
-        		else
-        		{
-        			shooterSink.grabFrame(frame);
-        		}
-        		if (framesToProcess > 0)
-            	{
-            		if (!cancelled)
-            		{
                         processImage(frame);
+                        System.out.println("Frame: " + framesToProcess);
                         framesToProcess--;
             		}
             		else
@@ -178,28 +138,21 @@ public class Entropy2017Targeting extends Thread {
             			getTargetInformation();
             			cancelled = false;
             		}
-            	}
-        		if (frameLag > 0)
-        		{
-        			frameLag--;
-        			drawTarget(frame, (long)lastKnownTarget.x, (long)lastKnownTarget.y);
-        			if (frameLag == 0)
-            		{
-            			Sensors.standardCameraMode(processingForPeg);
-            		}
         		}
-        		debugStream.putFrame(frame);
+        		catch (Exception e)
+        		{
+        			System.out.println("failed somewhere in processing");
+        		}
         	}
+        	Sensors.standardCameraMode();
+        	Sensors.setCameraLight(false);
         }
 	}
 	
 	public void shutdownThread()
 	{
 		done = true;
-		if (!DEBUG_ENABLED)
-		{
-			this.notify();
-		}
+		this.notify();
 	}
 	
 	public ArrayList<TargetInformation> getTargetInformation()
@@ -210,6 +163,11 @@ public class Entropy2017Targeting extends Thread {
 		return ret;
 	}
 	
+	public boolean foundGear()
+	{
+		return lookingAtGear;
+	}
+	
 	/**
 	 * Process the specified number of frames for a target
 	 * @param numFrames number of frames to process
@@ -217,16 +175,13 @@ public class Entropy2017Targeting extends Thread {
 	 */
 	public void processFrames(int numFrames, boolean targetingPeg)
 	{
-		Sensors.targetingCameraMode(targetingPeg);
-		Sensors.turnOnCameraLight(targetingPeg);
+		Sensors.targetingCameraMode();
+		Sensors.setCameraLight(true);
 		framesToProcess = numFrames;
 		processingForPeg = targetingPeg;
-		if (!DEBUG_ENABLED)
+		synchronized(this)
 		{
-			synchronized(this)
-			{
-				this.notify();
-			}
+			this.notify();
 		}
 	}
 	
@@ -273,36 +228,26 @@ public class Entropy2017Targeting extends Thread {
 	 * Processes an image for either peg or high goal targets
 	 * @param image
 	 */
-	private void processImage(Mat image) {
-		TargetInformation targetInfo;
-		
-		Mat cleanedImage = getHSVThreshold(image);
-		
+	private void processImage(Mat image) {		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//vvvvvvvvvvvvvvvvvvv FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE vvvvvvvvvvvvvvvvvvv//
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		if (processingForPeg)
 		{
+			TargetInformation targetInfo;
+			Mat cleanedImage = getHSVThreshold(image);
 			targetInfo = findPeg(cleanedImage);
+			infoList.add(targetInfo);
 		}
 		else
 		{
-			targetInfo = findHighGoal(cleanedImage);
+			framesToProcess = 100; // So that the processing is continuous until found
+			lookingAtGear = lookForGear(image);
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//^^^^^^^^^^^^^^^^^^^ FUTURE YEARS LOOK HERE, THIS IS WHAT YOU WILL WANT TO REPLACE ^^^^^^^^^^^^^^^^^^^//
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		// If debug mode is enabled, the target will be drawn on the 
-		// image for 12 frames at the last known position
-		if (targetInfo.targetFound)
-		{
-			lastKnownTarget.x = (double)targetInfo.aimX;
-			lastKnownTarget.y = (double)targetInfo.y;
-			frameLag = 12;
-		}
-		
-		infoList.add(targetInfo);
 		return;
     }
 
@@ -434,6 +379,11 @@ public class Entropy2017Targeting extends Thread {
 	    }
 	    
 	    return ret;
+	}
+	
+	private boolean lookForGear(Mat image)
+	{
+		return false;
 	}
 	
 	/**

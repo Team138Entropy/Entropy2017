@@ -16,7 +16,7 @@ public class OI {
     
     Button toggleGearRamButton 			= new JoystickButton(operatorStick, 1);
     Button toggleRopeGrabberButton 		= new JoystickButton(operatorStick, 2);
-    Button pulseRopeButton				= new JoystickButton(operatorStick, 3);
+    Button chuteAcquireButton			= new JoystickButton(operatorStick, 3);
     Button floorAcquireButton	 		= new JoystickButton(operatorStick, 4);
     Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
     Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
@@ -29,12 +29,11 @@ public class OI {
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
-    	pulseRopeButton.whenPressed(new PulseClimb());
+    	chuteAcquireButton.whenPressed(new ChuteAcquire());
     	//floorAcquireButton.whenPressed(new FloorAcquire());
     	toggleWristButton.whenPressed(new SetWristPosition());
     	toggleClawButton.whenPressed(new SetClawPosition());
     	toggleRopeGrabberButton.whenPressed(new GraspRope());
-    	shootButton.whileHeld(new Shoot());
     	//autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
     	//autoGearPlaceButton.whenPressed(new VisionCorrect2Step(4));
     	
