@@ -11,7 +11,7 @@ package org.usfirst.frc.team138.robot.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonomousCommand extends CommandGroup {
-
+	private boolean doExtraDrive = true;
 	public AutonomousCommand(String team, String startPos, String autoMode){
 		// Test Mode
 		if (autoMode == "test")
@@ -33,14 +33,14 @@ public class AutonomousCommand extends CommandGroup {
 					addSequential(new AutoDrive(0.65, 96));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 29));
+					addSequential(new AutoDrive(0.65, 15));
 				}
 				if (team == "blue")
 				{   // based on mirror of "red-right"
 					addSequential(new AutoDrive(0.65, 96));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.65, 29));
+					addSequential(new AutoDrive(0.65, 15));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -53,16 +53,18 @@ public class AutonomousCommand extends CommandGroup {
      			addSequential(new AutoDrive(-0.7,22));
      			addSequential(new AutoDrive(127.5));
 				addSequential(new AutoDrive(-0.7, 175));
-//				if (team == "blue")
-//				{
-//					addSequential(new AutoDrive(90));
-//					addSequential(new AutoDrive(-0.7, 120));
-//					addSequential(new AutoDrive(90));
-//				}
+				if (team == "blue" && doExtraDrive)
+				{
+					addSequential(new AutoDrive(90));
+					addSequential(new AutoDrive(-0.7, 120));
+					addSequential(new AutoDrive(-90));
+				}
 			}
 			if (startPos == "middle")
 			{   // tested with competition robot on practice field
-				addSequential(new AutoDrive(0.65, 60));
+				addSequential(new AutoDrive(0.65, 40));
+				addSequential(new VisionCorrect(true, 4));
+				addSequential(new AutoDrive(0.65, 20));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.5));
@@ -75,21 +77,21 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
 			}
-			if (startPos == "right")
+			if (startPos == "right" && doExtraDrive)
 			{
 				if (team == "red")
 				{   // tested with competition robot on practice field
-					addSequential(new AutoDrive(0.65, 96));
+					addSequential(new AutoDrive(0.65, 89));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 29));
+					addSequential(new AutoDrive(0.65, 30));
 				}
 				if (team == "blue")
 				{   // based on mirror of "red left"
-					addSequential(new AutoDrive(0.65, 96));
+					addSequential(new AutoDrive(0.65, 89));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 29));
+					addSequential(new AutoDrive(0.65, 30));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -106,12 +108,12 @@ public class AutonomousCommand extends CommandGroup {
      			addSequential(new AutoDrive(-0.7,22));
      			addSequential(new AutoDrive(-125));
 				addSequential(new AutoDrive(-0.7, 175));
-//				if (team == "red")
-//				{
-//					addSequential(new AutoDrive(-90));
-//					addSequential(new AutoDrive(-0.7, 120));
-//					addSequential(new AutoDrive-(90));
-//				}
+				if (team == "red")
+				{
+					addSequential(new AutoDrive(-90));
+					addSequential(new AutoDrive(-0.7, 120));
+					addSequential(new AutoDrive(90));
+				}
 			}
 		}
 	}

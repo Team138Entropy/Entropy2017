@@ -37,7 +37,7 @@ public class Sensors {
         
         groundCamera = CameraServer.getInstance().startAutomaticCapture("Ground Feed", 1);
         groundCamera.setResolution(320, 240);
-        groundCamera.setFPS(5);
+        groundCamera.setFPS(20);
     	
     	cameraProcessor = new Entropy2017Targeting(gearCamera, groundCamera);
 		cameraProcessor.start();
