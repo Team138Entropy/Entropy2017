@@ -30,7 +30,7 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{   // tested with competition robot on practice field
-					addSequential(new AutoDrive(0.65, 90));
+					addSequential(new AutoDrive(0.65, 70)); // previously "90"
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
 					addSequential(new AutoDrive(0.65, 15));
