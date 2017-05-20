@@ -81,10 +81,9 @@
 		<location x="-9" y="13"/>
 		<width>517</width>
 		<height>362</height>
-		<property name="Camera Choice" value="Rope and Shooter Feed"/>
+		<property name="Camera Choice" value="Ground Feed"/>
 	</static-widget>
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Distance:"/>
 </xml>
