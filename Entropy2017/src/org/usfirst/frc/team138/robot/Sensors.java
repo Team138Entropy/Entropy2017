@@ -27,8 +27,8 @@ public class Sensors {
         
         leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
 		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
-    	leftEncoder.setDistancePerPulse(0.182);
-    	rightEncoder.setDistancePerPulse(0.182);
+    	leftEncoder.setDistancePerPulse(0.124);
+    	rightEncoder.setDistancePerPulse(0.124);
     	resetEncoders();
     	
     	gearCamera = CameraServer.getInstance().startAutomaticCapture("Gear Feed", 0);

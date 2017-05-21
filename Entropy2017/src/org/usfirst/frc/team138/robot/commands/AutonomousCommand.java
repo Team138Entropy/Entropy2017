@@ -30,41 +30,35 @@ public class AutonomousCommand extends CommandGroup {
 			{
 				if (team == "red")
 				{   // tested with competition robot on practice field
-					addSequential(new AutoDrive( 0.6, 90));
+					addSequential(new AutoDrive( 0.65, 90));
 					addSequential(new AutoDrive( 52.5 ));
 					addSequential(new VisionCorrect( true, 4));
-					addSequential(new AutoDrive( 0.6, 10));
+					addSequential(new AutoDrive( 0.65, 10));
 				}
 				if (team == "blue")
 				{   // based on mirror of "red-right"
-					addSequential(new AutoDrive(0.6, 90));
+					addSequential(new AutoDrive(0.65, 90));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 10));
+					addSequential(new AutoDrive(0.65, 10));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.6));
-				addSequential(new AutoDrive(-0.7, 20));
+				addSequential(new AutoDrive(-0.65, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
 				// drive to neutral zone after placement of peg (left)
-     			addSequential(new AutoDrive(-0.7,22));
+     			addSequential(new AutoDrive(-0.65, 20));
      			addSequential(new AutoDrive(127.5));
-				addSequential(new AutoDrive(-0.7, 175));
-				if (team == "blue" && doExtraDrive)
-				{
-					addSequential(new AutoDrive(90));
-					addSequential(new AutoDrive(-0.7, 120));
-					addSequential(new AutoDrive(-90));
-				}
+				addSequential(new AutoDrive(-0.65, 175));
 			}
 			if (startPos == "middle")
 			{   // tested with competition robot on practice field
-				addSequential(new AutoDrive(0.6, 40));
+				addSequential(new AutoDrive(0.65, 40));
 				addSequential(new VisionCorrect(true, 4));
-				addSequential(new AutoDrive(0.6, 20));
+				addSequential(new AutoDrive(0.65, 20));
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.6));
@@ -72,26 +66,26 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new Wait(0.1));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.6));
-				addSequential(new AutoDrive(-0.7, 15));
+				addSequential(new AutoDrive(-0.65, 15));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
 			}
-			if (startPos == "right" && doExtraDrive)
+			if (startPos == "right")
 			{
 				if (team == "red")
 				{   // tested with competition robot on practice field
-					addSequential(new AutoDrive(0.6, 89));
+					addSequential(new AutoDrive(0.65, 90));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 25));
+					addSequential(new AutoDrive(0.65, 10));
 				}
 				if (team == "blue")
 				{   // based on mirror of "red left"
-					addSequential(new AutoDrive(0.6, 89));
+					addSequential(new AutoDrive(0.65, 90));
 					addSequential(new AutoDrive(-52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.6, 25));
+					addSequential(new AutoDrive(0.65, 10));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
@@ -100,21 +94,15 @@ public class AutonomousCommand extends CommandGroup {
 				addSequential(new Wait(0.1));
 				addSequential(new PushGear(true));
 				addSequential(new Wait(0.6));
-				addSequential(new AutoDrive(-0.7, 20));
+				addSequential(new AutoDrive(-0.65, 20));
 				addSequential(new PushGear(false));
 				addSequential(new Wait(0.1));
 				addSequential(new SetClawPosition(false));
 				// drive to neutral zone after placement of peg (right)
-     			addSequential(new AutoDrive(-0.7,22));
+     			addSequential(new AutoDrive(-0.65, 20));
      			addSequential(new AutoDrive(-125));
-				addSequential(new AutoDrive(-0.7, 175));
-				if (team == "red")
-				{
-					addSequential(new AutoDrive(-90));
-					addSequential(new AutoDrive(-0.7, 120));
-					addSequential(new AutoDrive(90));
+				addSequential(new AutoDrive(-0.65, 175));
 				}
-			}
 		}
 	}
 }
