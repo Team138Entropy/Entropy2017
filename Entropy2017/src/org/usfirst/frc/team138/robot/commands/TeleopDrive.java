@@ -6,6 +6,8 @@ import org.usfirst.frc.team138.robot.subsystems.Claw;
 
 public class TeleopDrive extends Command{
 	
+	float clawUpPoint = 0.1f;
+	
 	public TeleopDrive(){
 		requires(Robot.drivetrain);
 	}
@@ -15,15 +17,17 @@ public class TeleopDrive extends Command{
 
 	protected void execute() {
 		//
-		// the Robot.drivetrain.driveWithTable may not be necessary
+		// the first Robot.drivetrain.driveWithTable may not be necessary
 		// 10/7/17 - pre RiverRage
+		// TODO: remove
 		//
-		if (Robot.oi.getMoveSpeed() < 0 && Robot.claw.wristIsUp() == false) {
-			Robot.claw.wristUp();
-		    Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
-		} else {
-			Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
-		}
+//		if (Robot.oi.getMoveSpeed() < clawUpPoint && Robot.claw.wristIsUp() == false) {
+//			Robot.claw.wristUp();
+//		    Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
+//		} else {
+//			Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
+//		}
+		Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
 	}
 
 	protected boolean isFinished() {
