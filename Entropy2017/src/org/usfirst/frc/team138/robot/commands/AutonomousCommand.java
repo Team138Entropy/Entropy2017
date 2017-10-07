@@ -33,14 +33,14 @@ public class AutonomousCommand extends CommandGroup {
 					addSequential(new AutoDrive(0.65, 90));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.65, 15));
+					addSequential(new AutoDrive(0.65, 30));
 				}
 				if (team == "blue")
 				{   // based on mirror of "red-right"
 					addSequential(new AutoDrive(0.65, 90));
 					addSequential(new AutoDrive(52.5));
 					addSequential(new VisionCorrect(true, 4));
-					addSequential(new AutoDrive(0.65, 15));
+					addSequential(new AutoDrive(0.65, 30));
 				}
 				addSequential(new SetClawPosition(true));
 				addSequential(new PushGear(true));
