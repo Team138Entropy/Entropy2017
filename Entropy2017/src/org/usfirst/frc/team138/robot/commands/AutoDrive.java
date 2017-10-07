@@ -172,13 +172,13 @@ public class AutoDrive extends Command implements PIDOutput{
 
 	protected void interrupted() {
 	}
-
+	
 	public void pidWrite(double output) {
 		output = -output;
 		if (rotateInPlace)
 		{
-			double minSpeed = 0.7;
-			if (output > minSpeed|| output < -minSpeed)
+			double minSpeed = 0.8;
+			if (output > minSpeed || output < -minSpeed)
 			{
 				rotateToAngleRate = output;
 			}
