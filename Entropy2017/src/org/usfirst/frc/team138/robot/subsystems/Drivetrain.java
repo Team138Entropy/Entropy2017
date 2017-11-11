@@ -11,6 +11,8 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
+	private boolean badIdea = false;
+	
 	protected void initDefaultCommand() {		
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
 		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
@@ -41,10 +43,26 @@ public class Drivetrain extends Subsystem{
 		rotateSpeed = applyDeadZone(rotateSpeed);
 				
 		// Motor Speeds on both the left and right sides
-		double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
-		double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
-		
-		drivetrain.setLeftRightMotorOutputs(leftMotorSpeed, rightMotorSpeed);
+		if (!badIdea) {
+			double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
+			double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
+			
+			drivetrain.setLeftRightMotorOutputs(leftMotorSpeed, rightMotorSpeed);
+		} else
+		{
+			if (moveSpeed <= 0) {
+				double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
+				double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
+				
+				drivetrain.setLeftRightMotorOutputs(-leftMotorSpeed, -rightMotorSpeed);
+			} else
+			{
+				double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
+				double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
+				
+				drivetrain.setLeftRightMotorOutputs(leftMotorSpeed, rightMotorSpeed);
+			}
+		}
 	}
 	
 	double getLeftMotorSpeed(double moveSpeed, double rotateSpeed)
@@ -67,7 +85,7 @@ public class Drivetrain extends Subsystem{
 	}
 	
 	int[] getIndex(double moveSpeed, double rotateSpeed)
-	{		
+	{
 		double diff1 = 0;
 		double diff2 = 0;
 		// [0] is x, [1] is y
