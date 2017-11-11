@@ -54,7 +54,7 @@ public class Drivetrain extends Subsystem{
 				double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
 				double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
 				
-				drivetrain.setLeftRightMotorOutputs(-leftMotorSpeed, -rightMotorSpeed);
+				drivetrain.setLeftRightMotorOutputs(rightMotorSpeed, leftMotorSpeed);
 			} else
 			{
 				double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
