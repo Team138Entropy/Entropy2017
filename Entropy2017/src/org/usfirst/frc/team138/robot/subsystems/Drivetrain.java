@@ -11,7 +11,7 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
-	private boolean badIdea = false;
+	private boolean badIdea = true;
 	
 	protected void initDefaultCommand() {		
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
@@ -50,7 +50,7 @@ public class Drivetrain extends Subsystem{
 			drivetrain.setLeftRightMotorOutputs(leftMotorSpeed, rightMotorSpeed);
 		} else
 		{
-			if (moveSpeed <= 0) {
+			if (moveSpeed > 0) {
 				double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
 				double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
 				
