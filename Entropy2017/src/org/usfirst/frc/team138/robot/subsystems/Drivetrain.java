@@ -11,7 +11,8 @@ public class Drivetrain extends Subsystem{
 	
 	RobotDrive drivetrain;
 	
-	private boolean badIdea = true;
+	//This is probably a bad idea
+	private boolean badIdea = false;
 	
 	protected void initDefaultCommand() {		
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
