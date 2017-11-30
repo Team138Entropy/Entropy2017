@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team138.robot.OI.*;
 
 public class Sensors {
-	public static ADXRS450_Gyro gyro;
+	public static ADXRS450_Gyro gyro; 
+	
 	
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
@@ -21,6 +23,7 @@ public class Sensors {
 	public static Entropy2017Targeting cameraProcessor;
 	
 	public static void initialize() {
+		oi = new OI();
         gyro = new ADXRS450_Gyro();
         gyro.calibrate();
         gyro.reset();
@@ -81,6 +84,7 @@ public class Sensors {
 	}
 	
 	public static void updateSmartDashboard(){
+		double []temp;
 		if (Robot.claw.clawIsOpen())
 		{
 			SmartDashboard.putString("Claw State:", "Open");
@@ -120,5 +124,7 @@ public class Sensors {
 		SmartDashboard.putNumber("Left Encoder:", leftEncoder.getDistance());
 		SmartDashboard.putNumber("Right Encoder:", rightEncoder.getDistance());
 		SmartDashboard.putNumber("Angle:", gyro.getAngle());
+		temp = OI.getFieldCommand();
+		SmartDashboard.putNumber("Magn:", rightEncoder.getDistance());
 	}
 }

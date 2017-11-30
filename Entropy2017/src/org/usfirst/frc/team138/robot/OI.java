@@ -21,6 +21,7 @@ public class OI {
     Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
     Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
     Button shootButton 					= new JoystickButton(operatorStick, 7);
+    Button zeroTurn                     = new JoystickButton(operatorStick, 8);
     Button autoPositionShooterButton 	= new JoystickButton(operatorStick, 9);
     Button autoGearPlaceButton 			= new JoystickButton(operatorStick, 10);
     Button cancelAutoRoutinesButton 	= new JoystickButton(operatorStick, 11);
@@ -59,5 +60,27 @@ public class OI {
 	{
 		return operatorStick.getRawAxis(1);
 	}
-}
+	
+	public boolean isZeroTurn()
+	{
+		return driverStick.getRawButton(8);
+	}
+
+    public static double[] getFieldCommand()
+    {
+    	double[] result = new double[2];
+           double x, y, magn, dir;
+    		x = driverStick.getRawAxis(1);
+    		y = driverStick.getRawAxis(4);
+    		dir = Math.atan2(y, x);
+    		magn = Math.sqrt((x*x) + (y*y));
+    		if(magn > 1)
+    		{
+    			magn = 1;
+    		}
+    		result[0] = magn;
+    		result[1] = dir*180/Math.PI;
+    		return result;
+    }
+} // :D
 
