@@ -59,5 +59,24 @@ public class OI {
 	{
 		return operatorStick.getRawAxis(1);
 	}
+	
+	public double [] getFieldCommand()
+	{
+		double Magnitude, Direction, x, y;
+		double [] result = new double[2];
+		y=driverStick.getRawAxis(1);
+		x=driverStick.getRawAxis(4);
+		Magnitude=Math.sqrt(x*x+y*y);
+		// Normalize to maximum of +/-1
+		if (Math.abs(Magnitude)>1)
+			Magnitude = Magnitude/Math.abs(Magnitude);
+		result[0]=Magnitude;
+		// Direction, in degrees, in range +/- 180
+		Direction=180/Math.PI*Math.atan2(y, x);
+		result[1]=Direction;
+		
+		return result;
+		
+	}
 }
 

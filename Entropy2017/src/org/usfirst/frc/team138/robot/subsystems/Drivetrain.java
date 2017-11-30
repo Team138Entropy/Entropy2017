@@ -173,4 +173,42 @@ public class Drivetrain extends Subsystem{
 		}
 		return finalSpeed;
 	}
+	
+	public void driveWithFieldCoord(double moveSpeed, double rotateSpeed)
+	{
+		// Get magnitude & direction from OI class
+		
+		// Get robot heading from gyro (Sensors class), 
+		
+		// Unwrap gyro to +/- 180,
+		
+		// Compute heading error, unwrapped;  watch out for different base orientation
+		// ie: is robot "0" aligned with joystick "0"
+		
+		// Set rotate speed proportional to angular error
+		
+		// Call arcadeDrive method (0 move speed for now)		
+		drivetrain.arcadeDrive(moveSpeed, rotateSpeed);
+	}
+	
+	public static double angleWrap(double angle) {
+		double result;
+		result=(angle % 360);
+		if (result<-180)
+			result+=360;
+		if (result > 180)
+			result-=360;
+		return result;
+	}
+	
+	public static double diffAngles(double angle1, double angle2) {
+		// returns unwrapped difference between two wrapped angles
+		// angles are assumed to wrap at +/-180 degree boundary
+		// result = angle1-angle2
+		double result=0;
+		result=angle1-angle2;
+		if (result<-180) result+=360;
+		if (result>180) result-=360;
+		return result;
+	}
 }

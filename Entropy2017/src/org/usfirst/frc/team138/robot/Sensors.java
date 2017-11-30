@@ -80,6 +80,14 @@ public class Sensors {
 		rightEncoder.reset();
 	}
 	
+	public static double getHeadingRate() {
+		double rate=0;
+		// 
+		rate=gyro.getRate();
+		// Convert to useful units
+		return rate;
+	}
+	
 	public static void updateSmartDashboard(){
 		if (Robot.claw.clawIsOpen())
 		{
