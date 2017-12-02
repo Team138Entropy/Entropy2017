@@ -4,10 +4,17 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.RobotDrive;
 import org.usfirst.frc.team138.robot.commands.TeleopDrive;
 import com.ctre.CANTalon;
+
+import org.usfirst.frc.team138.robot.Constants;
+import org.usfirst.frc.team138.robot.OI;
 import org.usfirst.frc.team138.robot.RobotMap;
+import org.usfirst.frc.team138.robot.Sensors;
+import org.usfirst.frc.team138.robot.Utility;
 
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
+	
+	public static OI oi;
 	
 	RobotDrive drivetrain;
 	
@@ -16,6 +23,8 @@ public class Drivetrain extends Subsystem{
 		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
 		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
 		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
+		
+		oi = new OI();
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
@@ -31,6 +40,45 @@ public class Drivetrain extends Subsystem{
 	public void driveTank(double leftSpeed, double rightSpeed) 
 	{
 		drivetrain.tankDrive(leftSpeed, rightSpeed);
+	}
+	
+	public void driveWithFieldCoord() {
+		// use arcadeDrive to drive with Field Coordinates
+		double [] userCmd=oi.getFieldCommand();
+		double headingError=0;
+		double rotateSpeed=0;
+		double moveSpeed=0;
+		
+		if (userCmd[0]>Constants.joystickDeadband)
+		{ // Nothing to do if magnitude is within deadband of 0,
+			// if Magnitude > deadBand, a move is required
+			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
+			// Assume that rotate to align robot front with user heading cmd
+			rotateSpeed=limitValue( headingError * Constants.headingGain, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+
+			if (oi.isZeroTurn())
+			{ // Do zero turn
+				// We always rotate to align robot heading with joystick when zero turn button
+				// is depressed
+				moveSpeed=0;
+			}
+			else
+			{ // Move (and possibly rotate to align heading)
+				if (Math.abs(headingError) <= Constants.turnRange)
+				{ // Align robot front with cmd heading
+					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
+				}
+				else
+				{ // Align rear of robot with cmd heading
+					headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading()+180);
+					rotateSpeed=limitValue( headingError * Constants.headingGain, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
+				}
+			}
+			
+			// arcadeDrive
+			drivetrain.arcadeDrive(moveSpeed, rotateSpeed);
+		}
 	}
 		
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
@@ -174,41 +222,8 @@ public class Drivetrain extends Subsystem{
 		return finalSpeed;
 	}
 	
-	public void driveWithFieldCoord(double moveSpeed, double rotateSpeed)
-	{
-		// Get magnitude & direction from OI class
-		
-		// Get robot heading from gyro (Sensors class), 
-		
-		// Unwrap gyro to +/- 180,
-		
-		// Compute heading error, unwrapped;  watch out for different base orientation
-		// ie: is robot "0" aligned with joystick "0"
-		
-		// Set rotate speed proportional to angular error
-		
-		// Call arcadeDrive method (0 move speed for now)		
-		drivetrain.arcadeDrive(moveSpeed, rotateSpeed);
-	}
+
+
 	
-	public static double angleWrap(double angle) {
-		double result;
-		result=(angle % 360);
-		if (result<-180)
-			result+=360;
-		if (result > 180)
-			result-=360;
-		return result;
-	}
 	
-	public static double diffAngles(double angle1, double angle2) {
-		// returns unwrapped difference between two wrapped angles
-		// angles are assumed to wrap at +/-180 degree boundary
-		// result = angle1-angle2
-		double result=0;
-		result=angle1-angle2;
-		if (result<-180) result+=360;
-		if (result>180) result-=360;
-		return result;
-	}
 }
