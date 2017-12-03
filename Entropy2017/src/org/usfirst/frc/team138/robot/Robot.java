@@ -1,12 +1,14 @@
 package org.usfirst.frc.team138.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team138.robot.subsystems.*;
 import org.usfirst.frc.team138.robot.commands.*;
+import edu.wpi.first.wpilibj.Preferences;
 
 /**
  * This is Master branch.
@@ -28,6 +30,13 @@ public class Robot extends IterativeRobot {
     public static final ClimbingMechanism climbingMechanism = new ClimbingMechanism();
     public static final Claw claw = new Claw();
     public static final Shooter shooter = new Shooter();
+    
+    Preferences prefs;
+	// Field_Coord Controller gains
+	double Control_KP; // Proportional
+	double Control_KD; // Derivative
+	double Control_KI; // Integral
+
     
     // Commands
     AutonomousCommand autonomousCommand;
@@ -64,6 +73,12 @@ public class Robot extends IterativeRobot {
 		autoModeChooser.addDefault("Place Gear", "gear");
 		autoModeChooser.addObject("Test" , "test");
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
+		
+		prefs = Preferences.getInstance();
+		Control_KP=prefs.getDouble("Rotate KP", 0);
+		Control_KI=prefs.getDouble("Rotate KI", 0);
+		Control_KD=prefs.getDouble("Rotate KD", 0);
+
     }
 	
 	/**
@@ -109,13 +124,14 @@ public class Robot extends IterativeRobot {
         if (autonomousCommand != null) {
         	autonomousCommand.cancel();
         }
+
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        //Scheduler.getInstance().run();
+        Scheduler.getInstance().run();
     	switch (oi.isNullBias()) {
 		case 0 :
 			Sensors.alignRobotHeading(0.0);

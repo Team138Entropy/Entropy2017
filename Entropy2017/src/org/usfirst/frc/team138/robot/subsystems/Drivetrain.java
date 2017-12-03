@@ -11,12 +11,18 @@ import org.usfirst.frc.team138.robot.RobotMap;
 import org.usfirst.frc.team138.robot.Sensors;
 import org.usfirst.frc.team138.robot.Utility;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
+
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
 	
 	public static OI oi;
 	
 	RobotDrive drivetrain;
+	
+	
 	
 	protected void initDefaultCommand() {		
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
@@ -48,13 +54,17 @@ public class Drivetrain extends Subsystem{
 		double headingError=0;
 		double rotateSpeed=0;
 		double moveSpeed=0;
+		double leftSpeed=0;
+		double rightSpeed=0;
+		double totalSpeed=0;
 		
 		if (userCmd[0]>Constants.joystickDeadband)
 		{ // Nothing to do if magnitude is within deadband of 0,
 			// if Magnitude > deadBand, a move is required
 			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
 			// Assume that rotate to align robot front with user heading cmd
-			rotateSpeed=limitValue( headingError * Constants.headingGain, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+			rotateSpeed=Constants.rotateSpeedScale* headingError * Constants.headingGain - Sensors.getRobotHeadingRate() * Constants.headingVelGain;
+			rotateSpeed=limitValue(rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
 
 			if (oi.isZeroTurn())
 			{ // Do zero turn
@@ -71,14 +81,27 @@ public class Drivetrain extends Subsystem{
 				else
 				{ // Align rear of robot with cmd heading
 					headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading()+180);
-					rotateSpeed=limitValue( headingError * Constants.headingGain, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+					rotateSpeed=Constants.rotateSpeedScale* headingError * Constants.headingGain - Sensors.getRobotHeadingRate() * Constants.headingVelGain;
+					rotateSpeed=limitValue( rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
 					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
 				}
 			}
 			
 			// arcadeDrive
-			drivetrain.arcadeDrive(moveSpeed, rotateSpeed);
+			leftSpeed=moveSpeed-rotateSpeed;
+			rightSpeed=moveSpeed+rotateSpeed;
+			totalSpeed=Math.sqrt(leftSpeed*leftSpeed + rightSpeed*rightSpeed);
+			if (totalSpeed>1)
+			{
+				leftSpeed=leftSpeed/totalSpeed;
+				rightSpeed=rightSpeed/totalSpeed;
+			}
+			
+			drivetrain.tankDrive(leftSpeed, rightSpeed);
+//			drivetrain.arcadeDrive(moveSpeed, -rotateSpeed);
 		}
+		SmartDashboard.putNumber("Rotate Speed:", rotateSpeed);
+		SmartDashboard.putNumber("Move Speed:", moveSpeed);
 	}
 		
 	public void driveWithTable(double moveSpeed, double rotateSpeed)

@@ -27,7 +27,7 @@ public class Constants {
 
 		// Flag to enable/disable FieldCoord (if false, then use "normal"
 		// robot coordinates
-		public final static boolean useFieldCoord = false;
+		public final static boolean useFieldCoord = true;
 		
 		// Offset to align heading reported by gyro with Field Coordinates
 		// heading should report "90" when robot is facing away from operator
@@ -52,10 +52,14 @@ public class Constants {
 
 		// Proportional Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError
-		public final static double headingGain = .01; // 
+		public static double headingGain = .07; // .07
 		
+		// Derivative Gain applied to heading error
+		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain
+		public static double headingVelGain = -0.02; // 
+
 		// Limit max rotate speed
-		public final static double maxRotateSpeed = 30; // Degrees_per_second
+		public static double maxRotateSpeed = 1; // Degrees_per_second
 		
 		// Reverse or Turn - decision criteria
 		// If abs(headingError) > turnRange, then drive in reverse while aligning
@@ -64,8 +68,10 @@ public class Constants {
 		public final static double turnRange = 95; // Degrees
 		
 		// moveSpeedScale - moveSpeed sent to arcadeDrive when Magnitude = 1;
-		public final static double moveSpeedScale = 1; // units?
+		public static double moveSpeedScale = 1; // units?
 		
+		// rotateSpeedScale - rotateSpeed sent to arcadeDrive when Magnitude = 1;
+		public final static double rotateSpeedScale = 1; // units?
 		
 		
 
