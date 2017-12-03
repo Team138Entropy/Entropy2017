@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import org.usfirst.frc.team138.robot.Constants;
 import org.usfirst.frc.team138.robot.Robot;
+import org.usfirst.frc.team138.robot.OI;
 //import org.usfirst.frc.team138.robot.subsystems.Claw;
 
 public class TeleopDrive extends Command{
@@ -30,7 +31,7 @@ public class TeleopDrive extends Command{
 //			Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
 //		}
 		if (!Constants.useFieldCoord)
-			Robot.drivetrain.driveWithTable(Robot.oi.getMoveSpeed(), Robot.oi.getRotateSpeed());
+			Robot.drivetrain.driveWithTable(OI.getMoveSpeed(), OI.getRotateSpeed());
 		else
 			Robot.drivetrain.driveWithFieldCoord();
 	}

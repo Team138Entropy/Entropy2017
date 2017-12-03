@@ -2,6 +2,7 @@ package org.usfirst.frc.team138.robot.commands;
 
 import org.usfirst.frc.team138.robot.Robot;
 import org.usfirst.frc.team138.robot.RobotMap;
+import org.usfirst.frc.team138.robot.OI;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -27,7 +28,7 @@ public class PulseClimb extends Command {
 	}
 	
 	protected boolean isFinished() {
-		return Robot.oi.autoRoutinesCancelled();
+		return OI.autoRoutinesCancelled();
 	}
 
 }

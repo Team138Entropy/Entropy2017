@@ -11,7 +11,7 @@ package org.usfirst.frc.team138.robot.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutonomousCommand extends CommandGroup {
-	private boolean doExtraDrive = true;
+//	private boolean doExtraDrive = true;
 	public AutonomousCommand(String team, String startPos, String autoMode){
 		// Test Mode
 		if (autoMode == "test")

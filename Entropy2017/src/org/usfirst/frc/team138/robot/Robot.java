@@ -3,12 +3,13 @@ package org.usfirst.frc.team138.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+//import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team138.robot.subsystems.*;
 import org.usfirst.frc.team138.robot.commands.*;
-import edu.wpi.first.wpilibj.Preferences;
+//import edu.wpi.first.wpilibj.Preferences;
+import org.usfirst.frc.team138.robot.OI;
 
 /**
  * This is Master branch.
@@ -20,7 +21,6 @@ import edu.wpi.first.wpilibj.Preferences;
  */
 public class Robot extends IterativeRobot {
 	// Interface with players
-	public static OI oi;
     SendableChooser<String> teamChooser;
     SendableChooser<String> startPosChooser;
     SendableChooser<String> autoModeChooser;
@@ -31,7 +31,7 @@ public class Robot extends IterativeRobot {
     public static final Claw claw = new Claw();
     public static final Shooter shooter = new Shooter();
     
-    Preferences prefs;
+	Preferences prefs = Preferences.getInstance();
 	// Field_Coord Controller gains
 	double Control_KP; // Proportional
 	double Control_KD; // Derivative
@@ -50,9 +50,8 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
     	// Interface
-		oi = new OI();
 		Sensors.initialize();
-		
+
 		// Smart Dashboard Initialization
 		Sensors.updateSmartDashboard();
 		SmartDashboard.putData(Scheduler.getInstance());
@@ -74,10 +73,9 @@ public class Robot extends IterativeRobot {
 		autoModeChooser.addObject("Test" , "test");
 		SmartDashboard.putData("Auto Mode:", autoModeChooser);
 		
-		prefs = Preferences.getInstance();
-		Control_KP=prefs.getDouble("Rotate KP", 0);
-		Control_KI=prefs.getDouble("Rotate KI", 0);
-		Control_KD=prefs.getDouble("Rotate KD", 0);
+		
+		
+		
 
     }
 	
@@ -124,6 +122,11 @@ public class Robot extends IterativeRobot {
         if (autonomousCommand != null) {
         	autonomousCommand.cancel();
         }
+        
+		Constants.headingGain=prefs.getDouble("Rotate_KP", 0);
+		Constants.headingIntGain=prefs.getDouble("Rotate_KI", 0);
+		Constants.headingVelGain=prefs.getDouble("Rotate_KD", 0);
+
 
     }
 
@@ -132,7 +135,8 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
-    	switch (oi.isNullBias()) {
+//		LiveWindow.run();
+    	switch (OI.isNullBias()) {
 		case 0 :
 			Sensors.alignRobotHeading(0.0);
 			break;			
@@ -147,12 +151,13 @@ public class Robot extends IterativeRobot {
 			break;
 		}
         Sensors.updateSmartDashboard();
+        
     }
     
     /**
      * This function is called periodically during test mode
      */
     public void testPeriodic() {
-        LiveWindow.run();
+  //      LiveWindow.run();
     }
 }

@@ -18,10 +18,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
 	
-	public static OI oi;
-	
+
 	RobotDrive drivetrain;
 	
+	// Integral heading error (used in Field Coordinates)
+	private static double cumHeadingError=0;
 	
 	
 	protected void initDefaultCommand() {		
@@ -30,7 +31,7 @@ public class Drivetrain extends Subsystem{
 		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
 		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
 		
-		oi = new OI();
+
 		
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
@@ -50,7 +51,7 @@ public class Drivetrain extends Subsystem{
 	
 	public void driveWithFieldCoord() {
 		// use arcadeDrive to drive with Field Coordinates
-		double [] userCmd=oi.getFieldCommand();
+		double [] userCmd=OI.getFieldCommand();
 		double headingError=0;
 		double rotateSpeed=0;
 		double moveSpeed=0;
@@ -62,11 +63,9 @@ public class Drivetrain extends Subsystem{
 		{ // Nothing to do if magnitude is within deadband of 0,
 			// if Magnitude > deadBand, a move is required
 			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
-			// Assume that rotate to align robot front with user heading cmd
-			rotateSpeed=Constants.rotateSpeedScale* headingError * Constants.headingGain - Sensors.getRobotHeadingRate() * Constants.headingVelGain;
-			rotateSpeed=limitValue(rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+			cumHeadingError+=Constants.Ts * headingError;
 
-			if (oi.isZeroTurn())
+			if (OI.isZeroTurn())
 			{ // Do zero turn
 				// We always rotate to align robot heading with joystick when zero turn button
 				// is depressed
@@ -79,17 +78,31 @@ public class Drivetrain extends Subsystem{
 					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
 				}
 				else
-				{ // Align rear of robot with cmd heading
-					headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading()+180);
-					rotateSpeed=Constants.rotateSpeedScale* headingError * Constants.headingGain - Sensors.getRobotHeadingRate() * Constants.headingVelGain;
-					rotateSpeed=limitValue( rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+				{ // Align rear of robot with cmd heading:
+					// Woops - need to "remove" the increment to cumHeadingError added above
+					cumHeadingError -= Constants.Ts * headingError;
+					// Add 180 to current heading, wrap to range of +/-180
+					// then unwrap difference with command direction to result in headingError
+					headingError = Utility.diffAngles(userCmd[1], Utility.angleWrap(Sensors.getRobotHeading()+180));
+					// Now update cumHeadingError with corrected headingError
+					cumHeadingError+=Constants.Ts * headingError;
+					// userCmd[0] is magnitude of speed, 
+					// since we're moving backwards (relative to robot), need to invert
+					// sign of moveSpeed to command wheels in reverse.
 					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
 				}
 			}
+			// PID control to align robot with user heading cmd
+			rotateSpeed=Constants.rotateSpeedScale*( headingError * Constants.headingGain  // Proportional Gain
+					- Sensors.getRobotHeadingRate() * Constants.headingVelGain            // Derivative Gain (applied to gyro rate only, therefore "-sign")
+					+ cumHeadingError * Constants.headingIntGain);                         // Integral Gain
+			rotateSpeed=limitValue(rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
 			
-			// arcadeDrive
+			// Tank Drive permits independent control over left and right wheel speeds
+			// This is required to be able to command ZeroTurn moves.
 			leftSpeed=moveSpeed-rotateSpeed;
 			rightSpeed=moveSpeed+rotateSpeed;
+			// Constrain vector magnitude of wheel speeds to range of +/- 1.0;
 			totalSpeed=Math.sqrt(leftSpeed*leftSpeed + rightSpeed*rightSpeed);
 			if (totalSpeed>1)
 			{
@@ -98,14 +111,15 @@ public class Drivetrain extends Subsystem{
 			}
 			
 			drivetrain.tankDrive(leftSpeed, rightSpeed);
-//			drivetrain.arcadeDrive(moveSpeed, -rotateSpeed);
+			SmartDashboard.putNumber("Heading Error:", headingError);
 		}
-		SmartDashboard.putNumber("Rotate Speed:", rotateSpeed);
-		SmartDashboard.putNumber("Move Speed:", moveSpeed);
+		SmartDashboard.putNumber("Left Speed:", leftSpeed);
+		SmartDashboard.putNumber("Right Speed:", rightSpeed);
 	}
 		
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
 	{
+		cumHeadingError=0; // Zero cumulative heading error when not using Field Coord
 		//rotateSpeed = -rotateSpeed;
 		// Filter input speeds
 		moveSpeed = applyDeadZone(moveSpeed);

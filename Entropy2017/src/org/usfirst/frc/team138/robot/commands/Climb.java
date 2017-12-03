@@ -3,6 +3,7 @@ package org.usfirst.frc.team138.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team138.robot.Robot;
 import org.usfirst.frc.team138.robot.RobotMap;
+import org.usfirst.frc.team138.robot.OI;
 
 public class Climb extends Command{
 	
@@ -16,11 +17,11 @@ public class Climb extends Command{
 	}
 
 	protected void execute() {
-		if(Robot.oi.getClimbSpeed() > threshold)
+		if(OI.getClimbSpeed() > threshold)
 		{
 			Robot.climbingMechanism.setSpeed(RobotMap.ROPE_CLIMB_SPEED);
 		}
-		else if(Robot.oi.getClimbSpeed() < -threshold)
+		else if(OI.getClimbSpeed() < -threshold)
 		{
 			Robot.climbingMechanism.setSpeed(RobotMap.ROPE_PULSE_SPEED);
 		}

@@ -6,6 +6,7 @@ package org.usfirst.frc.team138.robot;
 public class Constants {
 
 	// System Constants
+		public final static double Ts=.02; // Sample period, in seconds
 	
 		// DriveMotor PID Configuration
 		public final static int ClosedLoop = 0;
@@ -57,6 +58,10 @@ public class Constants {
 		// Derivative Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain
 		public static double headingVelGain = -0.02; // 
+
+		// Integral Gain applied to heading error
+		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain + cumHeadingError * headingIntGain
+		public static double headingIntGain = 0; // 
 
 		// Limit max rotate speed
 		public static double maxRotateSpeed = 1; // Degrees_per_second

@@ -10,28 +10,24 @@ import org.usfirst.frc.team138.robot.commands.*;
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
  */
-public class OI {
-    Joystick driverStick = new Joystick(0);
-    Joystick operatorStick = new Joystick(1);
+public final class OI {
+    static Joystick driverStick = new Joystick(0);
+    static Joystick operatorStick = new Joystick(1);
     
-    Button toggleGearRamButton 			= new JoystickButton(operatorStick, 1);
-    Button toggleRopeGrabberButton 		= new JoystickButton(operatorStick, 2);
-    Button chuteAcquireButton			= new JoystickButton(operatorStick, 3);
-    Button floorAcquireButton	 		= new JoystickButton(operatorStick, 4);
-    Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
-    Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
-    Button shootButton 					= new JoystickButton(operatorStick, 7);
-    Button zeroTurn                     = new JoystickButton(operatorStick, 8);
-    Button autoPositionShooterButton 	= new JoystickButton(operatorStick, 9);
-    Button autoGearPlaceButton 			= new JoystickButton(operatorStick, 10);
-    Button cancelAutoRoutinesButton 	= new JoystickButton(operatorStick, 11);
+    static Button toggleGearRamButton 			= new JoystickButton(operatorStick, 1);
+    static Button toggleRopeGrabberButton 		= new JoystickButton(operatorStick, 2);
+    static Button chuteAcquireButton			= new JoystickButton(operatorStick, 3);
+    static Button floorAcquireButton	 		= new JoystickButton(operatorStick, 4);
+    static Button toggleWristButton 			= new JoystickButton(operatorStick, 5);
+    static Button toggleClawButton 			= new JoystickButton(operatorStick, 6);
+    static Button shootButton 					= new JoystickButton(operatorStick, 7);
+    static Button zeroTurn                     = new JoystickButton(operatorStick, 8);
+    static Button autoPositionShooterButton 	= new JoystickButton(operatorStick, 9);
+    static Button autoGearPlaceButton 			= new JoystickButton(operatorStick, 10);
+    static Button cancelAutoRoutinesButton 	= new JoystickButton(operatorStick, 11);
     
-    Button driverAutoGearButton 		= new JoystickButton(driverStick, 4);
+    static Button driverAutoGearButton 		= new JoystickButton(driverStick, 8); // was 4
     
-    Button AlignGyro0					= new JoystickButton(driverStick,2);
-    Button AlignGyro90					= new JoystickButton(driverStick,4);
-    Button AlignGyro_90					= new JoystickButton(driverStick,1);
-    Button AlignGyro_180				= new JoystickButton(driverStick,3);
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
@@ -47,33 +43,58 @@ public class OI {
     	
     }
     
-    public boolean autoRoutinesCancelled()
+    public static boolean autoRoutinesCancelled()
     {
     	System.out.println("cancelled auto routines");
     	return cancelAutoRoutinesButton.get();
     }
     
-	public double getMoveSpeed()
+	public static double getMoveSpeed()
 	{
 		return driverStick.getRawAxis(1);
 	}
 	
-	public double getRotateSpeed()
-	{
-		return driverStick.getRawAxis(4);
+	public static double getRotateSpeed()
+	{ // Re-defined to be left/right of Left Hand joystick
+		return driverStick.getRawAxis(1); // was 4 (Right hand joystick)
 	}
 	
-	public double getClimbSpeed()
+	public static double getClimbSpeed()
 	{
 		return operatorStick.getRawAxis(1);
 	}
 	
-	public double [] getFieldCommand()
+	public static boolean useFieldCoord() {
+		/*
+		 * Use driverStick axes 0,1 for motion in Robot coords
+		 * Use driverStick axes 4,5 for Field Coord motion
+		 * Compare magnitude of both joysticks to determine
+		 * which coordinate system operator is commanding.
+		 * Normally, the operator will only use one or the other
+		 * joystick.  However, in case both are off-center, 
+		 * select commands from the one with greater magnitude.
+		 * In the case of a "tie", preference given to Robot Coordinates.
+		 * */
+		double x,y;
+		double RC;
+		double [] FC;
+		x=getMoveSpeed();
+		y=getRotateSpeed();
+		RC=x*x+y*y;
+		//
+		FC=getFieldCommand();
+		if (RC>=FC[0])
+			return false;
+		else
+			return true;
+	}
+	
+	public static double [] getFieldCommand()
 	{
 		double Magnitude, Direction, x, y;
 		double [] result = new double[2];
-		y=-driverStick.getRawAxis(1); // Inverted Y axis so "fwd" = +90 degrees
-		x=driverStick.getRawAxis(0);
+		y=-driverStick.getRawAxis(5); // Inverted Y axis so "fwd" = +90 degrees
+		x=driverStick.getRawAxis(4);
 		Magnitude=Math.sqrt(x*x+y*y);
 		// Apply deadband to avoid "creep" when joystick
 		// does not return "0" at center position.
@@ -98,13 +119,13 @@ public class OI {
 	}
 	
 
-	public boolean isZeroTurn()
+	public static boolean isZeroTurn()
 	{
 		// Execute a zero-turn (rotate about robot center) if zero-turn button is pressed
-		return driverStick.getRawButton(5);
+		return driverStick.getRawButton(6);
 	}
 	
-	public int isNullBias()
+	public static int isNullBias()
 	{ // reset gyro Bias to ordinal directions based 
 		// on which button (1-4) on driver joystick is pressed
 		// buttons are labeled "A" "B" "X" "Y"

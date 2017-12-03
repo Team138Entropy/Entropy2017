@@ -3,6 +3,7 @@ package org.usfirst.frc.team138.robot.commands;
 import org.usfirst.frc.team138.robot.Robot;
 import java.util.ArrayList;
 import org.usfirst.frc.team138.robot.Sensors;
+import org.usfirst.frc.team138.robot.OI;
 import org.usfirst.frc.team138.robot.subsystems.vision2017.Entropy2017Targeting;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,7 +35,7 @@ public class VisionCorrect2Step extends Command {
 	}
 
 	protected void execute() {
-		if (Robot.oi.autoRoutinesCancelled())
+		if (OI.autoRoutinesCancelled())
 		{
 			if (getGroup() != null)
 			{

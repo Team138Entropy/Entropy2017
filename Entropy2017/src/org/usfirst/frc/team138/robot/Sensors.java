@@ -20,7 +20,6 @@ public class Sensors {
 	static Relay cameraLight = new Relay(RobotMap.GEAR_CAMERA_LIGHT_PORT);
 	static UsbCamera groundCamera;
 	public static Entropy2017Targeting cameraProcessor;
-	public static OI oi;
 	
 	public static double gyroBias=0;
 	
@@ -29,8 +28,6 @@ public class Sensors {
         gyro.calibrate();
         gyro.reset();
         
-		oi = new OI();
-		
         leftEncoder = new Encoder(RobotMap.LEFT_ENCODER_PORT_A, RobotMap.LEFT_ENCODER_PORT_B);
 		rightEncoder = new Encoder(RobotMap.RIGHT_ENCODER_PORT_A, RobotMap.RIGHT_ENCODER_PORT_B);
     	leftEncoder.setDistancePerPulse(0.124);
@@ -155,7 +152,7 @@ public class Sensors {
 		SmartDashboard.putNumber("Left Encoder:", leftEncoder.getDistance());
 		SmartDashboard.putNumber("Right Encoder:", rightEncoder.getDistance());
 		// User command (joystick)
-		userCmd = oi.getFieldCommand();
+		userCmd = OI.getFieldCommand();
 		SmartDashboard.putNumber("Cmd Angle:", userCmd[1]);
 		SmartDashboard.putNumber("Magn:", userCmd[0]);
 		// Robot heading (in Field Coordinates)

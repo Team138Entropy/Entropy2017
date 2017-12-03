@@ -8,7 +8,7 @@ import java.util.*;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
+//import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 
@@ -24,8 +24,8 @@ public class Entropy2017Targeting extends Thread {
 	public static final double pixelsPerYDegree = 17.0;
 	private static final double cameraOffsetInches = 0; // -5.1, -7.5
 	private static final double shooterOffsetInches = 12;
-	private static final double pegGapInches = 6.25;
-	private static final double pegWidthInches = 10.25;
+//	private static final double pegGapInches = 6.25;
+//	private static final double pegWidthInches = 10.25;
 	private static final double pegHeightInches = 5;
 	private static final double highGoalHeightInches = 10;
 	private static final double highGoalGapInches = 4;
@@ -334,6 +334,7 @@ public class Entropy2017Targeting extends Thread {
 	 * @param image input image
 	 * @return all information about target, or returns blank TargetInformation if no targets found
 	 */
+
 	private TargetInformation findHighGoal(Mat image) {
 		TargetInformation ret = new TargetInformation();
 		ret.targetingPeg = false;
@@ -380,6 +381,7 @@ public class Entropy2017Targeting extends Thread {
 	    
 	    return ret;
 	}
+
 	
 	private boolean lookForGear(Mat image)
 	{
@@ -418,12 +420,14 @@ public class Entropy2017Targeting extends Thread {
 		byte[] data = new byte[rows*cols];
 		long[] retSums = null;
 		
-		int status = m.get(0, 0,data);
-		
+//		int status = m.get(0, 0,data);
+		/*
 		long total = 0;
 		for (int k=0;k<data.length;k++) {
 			total += Byte.toUnsignedInt(data[k]);
 		}
+		*/
+		
 		if (byRow) {
 			retSums = new long[cols];
 			for (int col=0;col<cols;col++) {
@@ -444,12 +448,12 @@ public class Entropy2017Targeting extends Thread {
   				}
   			}
   		}
-		
+		/*
 		int total1 = 0;
 		for (int k=0; k < retSums.length; k++) {
 			total1 += retSums[k];
 		}
-	
+	*/
 		return retSums;
 	}
 	

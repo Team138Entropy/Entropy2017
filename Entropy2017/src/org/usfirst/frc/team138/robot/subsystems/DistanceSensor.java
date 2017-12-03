@@ -1,8 +1,8 @@
 package org.usfirst.frc.team138.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.Ultrasonic;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DistanceSensor {
 	
