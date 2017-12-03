@@ -26,10 +26,7 @@ public class Constants {
 		// magnitude is less than deadBand, then set Magnitude to 0
 		public final static double joystickDeadband = 0.09;
 
-		// Flag to enable/disable FieldCoord (if false, then use "normal"
-		// robot coordinates
-		public final static boolean useFieldCoord = true;
-		
+	
 		// Offset to align heading reported by gyro with Field Coordinates
 		// heading should report "90" when robot is facing away from operator
 		// ie: when robot is facing in +Y direction of Field coordinates.
