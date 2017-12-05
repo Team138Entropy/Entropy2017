@@ -28,6 +28,8 @@ public final class OI {
     
     static Button driverAutoGearButton 		= new JoystickButton(driverStick, 8); // was 4
     
+ //   static Button Align_0Deg					= new JoystickButton(driverStick,2);
+    
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
@@ -39,6 +41,9 @@ public final class OI {
     	//autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
     	//autoGearPlaceButton.whenPressed(new VisionCorrect2Step(4));
     	driverAutoGearButton.whenPressed(new VisionCorrect(true, 4));
+    	
+    	// Buttons to Align gyro with Cardinal directions
+    //	Align_0Deg.whileHeld( new Align_Gyro(0));
     	
     	
     }

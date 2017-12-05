@@ -136,6 +136,7 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
 //		LiveWindow.run();
+        
     	switch (OI.isNullBias()) {
 		case 0 :
 			Sensors.alignRobotHeading(0.0);
@@ -150,6 +151,7 @@ public class Robot extends IterativeRobot {
 			Sensors.alignRobotHeading(180.0);
 			break;
 		}
+		
         Sensors.updateSmartDashboard();
         
     }

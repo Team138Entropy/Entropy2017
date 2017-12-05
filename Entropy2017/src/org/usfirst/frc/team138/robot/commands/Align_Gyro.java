@@ -14,12 +14,11 @@ public class Align_Gyro extends Command {
 	
 	protected void execute()
 	{
-		System.out.println("In Align_Gyro");
 		Sensors.alignRobotHeading(LocalAngle);
 	}
 	
 	protected void initialize() {
-		setTimeout(0.5);
+		setTimeout(1.0);
 	}
 	protected boolean isFinished() {
 		return isTimedOut();
