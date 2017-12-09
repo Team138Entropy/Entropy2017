@@ -107,7 +107,16 @@ public class Drivetrain extends Subsystem{
 				leftSpeed=leftSpeed/totalSpeed;
 				rightSpeed=rightSpeed/totalSpeed;
 			}
-			
+			// Apply Bias to overcome stiction, but only if speed > minSpede
+			if (leftSpeed > Constants.headingMinBiasSpeed)
+				leftSpeed += Constants.headingFdFwdBias;
+			if (leftSpeed < -Constants.headingMinBiasSpeed)
+				leftSpeed -= Constants.headingFdFwdBias;
+			if (rightSpeed > Constants.headingMinBiasSpeed)
+				rightSpeed += Constants.headingFdFwdBias;
+			if (rightSpeed < -Constants.headingMinBiasSpeed)
+				rightSpeed -= Constants.headingFdFwdBias;
+		
 			drivetrain.tankDrive(leftSpeed, rightSpeed);
 			SmartDashboard.putNumber("Heading Error:", headingError);
 		}

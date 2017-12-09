@@ -126,6 +126,8 @@ public class Robot extends IterativeRobot {
 		Constants.headingGain=prefs.getDouble("Rotate_KP", 0);
 		Constants.headingIntGain=prefs.getDouble("Rotate_KI", 0);
 		Constants.headingVelGain=prefs.getDouble("Rotate_KD", 0);
+		Constants.headingFdFwdBias=prefs.getDouble("Rotate_FF", 0);
+		Constants.moveSpeedScale=prefs.getDouble("Move Scale", 1);
 
 
     }

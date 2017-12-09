@@ -105,7 +105,7 @@ public class Sensors {
 	
 	public static double getRobotHeadingRate() {
 		// Return current robot rate of rotation (
-		double rate=gyro.getRate();
+		double rate=Constants.gyroDir * gyro.getRate();
 		return rate;
 	}
 	

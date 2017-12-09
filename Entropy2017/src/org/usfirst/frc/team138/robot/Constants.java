@@ -50,11 +50,11 @@ public class Constants {
 
 		// Proportional Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError
-		public static double headingGain = .07; // .07
+		public static double headingGain = .25; // .07
 		
 		// Derivative Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain
-		public static double headingVelGain = -0.02; // 
+		public static double headingVelGain = 0.02; // 
 
 		// Integral Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain + cumHeadingError * headingIntGain
@@ -75,6 +75,12 @@ public class Constants {
 		// rotateSpeedScale - rotateSpeed sent to arcadeDrive when Magnitude = 1;
 		public final static double rotateSpeedScale = 1; // units?
 		
+		// rotateFdFwdBias - apply a bias to the left/right motor speed command
+		// based on sign(<speed>).  Do Not apply the bias if the abs(speed)<minSpeed
+		public static double headingFdFwdBias = 0; // units are fractions of full speed
 		
+		// headingMinBiasSpeed - do NOT apply headingFdFwdBias to <speed> commands if 
+		// abs(<speed>) < headingMinBiasSpeed.  This avoids chatter when the joystick is near center.
+		public static double headingMinBiasSpeed = 0.01; // units are fractions of full speed
 
 }
