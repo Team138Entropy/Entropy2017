@@ -50,18 +50,18 @@ public class Constants {
 
 		// Proportional Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError
-		public static double headingGain = .25; // .07
+		public static double headingGain = .05; // .07
 		
 		// Derivative Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain
-		public static double headingVelGain = 0.02; // 
+		public static double headingVelGain = 0.0; // 
 
 		// Integral Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain + cumHeadingError * headingIntGain
-		public static double headingIntGain = 0; // 
+		public static double headingIntGain = 0.03; // 
 
 		// Limit max rotate speed
-		public static double maxRotateSpeed = 1; // Degrees_per_second
+		public static double maxRotateSpeed = .5; // 
 		
 		// Reverse or Turn - decision criteria
 		// If abs(headingError) > turnRange, then drive in reverse while aligning
@@ -70,7 +70,7 @@ public class Constants {
 		public final static double turnRange = 95; // Degrees
 		
 		// moveSpeedScale - moveSpeed sent to arcadeDrive when Magnitude = 1;
-		public static double moveSpeedScale = 1; // units?
+		public static double moveSpeedScale = 0.5; // units?
 		
 		// rotateSpeedScale - rotateSpeed sent to arcadeDrive when Magnitude = 1;
 		public final static double rotateSpeedScale = 1; // units?
@@ -82,5 +82,12 @@ public class Constants {
 		// headingMinBiasSpeed - do NOT apply headingFdFwdBias to <speed> commands if 
 		// abs(<speed>) < headingMinBiasSpeed.  This avoids chatter when the joystick is near center.
 		public static double headingMinBiasSpeed = 0.01; // units are fractions of full speed
+
+		// Low pass filter on joystick heading - 
+		// Filter eqn:  heading(i+1) =joystickDir(i)*Alpha + (1-Alpha)*(heading(i)
+		// where Alpha = Ts*2*pi*Freq
+		//   Ts is sample period (20 mSec for FRC)
+		//   Freq is location of filter pole in Hz
+		public static double rotateAlpha = .02*6.28*1;
 
 }

@@ -83,6 +83,7 @@ public final class OI {
 		double x,y;
 		double RC;
 		double [] FC;
+		
 		x=getMoveSpeed();
 		y=getRotateSpeed();
 		RC=x*x+y*y;
@@ -94,10 +95,21 @@ public final class OI {
 			return true;
 	}
 	
+	public static boolean isReverse() {
+		return driverStick.getRawButton(5);
+	}
+	
 	public static double [] getFieldCommand()
 	{
 		double Magnitude, Direction, x, y;
 		double [] result = new double[2];
+		// Coeff for cubic polynomial map btwn joystick and magnitude
+		double A=.3;
+		double B=.25;
+		double C=.9259;
+		double D=-.3772;
+		double z;
+
 		y=-driverStick.getRawAxis(5); // Inverted Y axis so "fwd" = +90 degrees
 		x=driverStick.getRawAxis(4);
 		Magnitude=Math.sqrt(x*x+y*y);
@@ -105,9 +117,15 @@ public final class OI {
 		// does not return "0" at center position.
 		if (Magnitude<Constants.joystickDeadband)
 			Magnitude=0;
-		// Normalize to maximum of +/-1
-		if (Math.abs(Magnitude)>1)
-			Magnitude = Magnitude/Math.abs(Magnitude);
+		else {		
+			//
+			// Cubic Polynomial maps between raw Joystick and Magnitude
+			z=Magnitude-Constants.joystickDeadband;		
+			Magnitude=A+B*z+C*z*z+D*z*z*z;		
+			// Normalize to maximum of +/-1
+			if (Math.abs(Magnitude)>1)
+				Magnitude = Magnitude/Math.abs(Magnitude);
+		}
 		result[0]=Magnitude;
 		// Direction, in degrees, in range +/- 180
 		Direction=180/Math.PI*Math.atan2(y, x);

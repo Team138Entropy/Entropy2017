@@ -23,6 +23,7 @@ public class Drivetrain extends Subsystem{
 	
 	// Integral heading error (used in Field Coordinates)
 	private static double cumHeadingError=0;
+	private static double lastHeading=0;
 	
 	
 	protected void initDefaultCommand() {		
@@ -60,7 +61,9 @@ public class Drivetrain extends Subsystem{
 		if (userCmd[0]>Constants.joystickDeadband)
 		{ // Nothing to do if magnitude is within deadband of 0,
 			// if Magnitude > deadBand, a move is required
-			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
+			lastHeading=Constants.rotateAlpha*userCmd[1] + (1-Constants.rotateAlpha)*lastHeading;
+			lastHeading=Utility.angleWrap(lastHeading);
+			headingError = Utility.diffAngles(lastHeading, Sensors.getRobotHeading());
 			cumHeadingError+=Constants.Ts * headingError;
 
 			if (OI.isZeroTurn())
@@ -69,9 +72,9 @@ public class Drivetrain extends Subsystem{
 				// is depressed
 				moveSpeed=0;
 			}
-			else
+			else			
 			{ // Move (and possibly rotate to align heading)
-				if (Math.abs(headingError) <= Constants.turnRange)
+				if (!OI.isReverse())
 				{ // Align robot front with cmd heading
 					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
 				}
@@ -90,6 +93,7 @@ public class Drivetrain extends Subsystem{
 					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
 				}
 			}
+
 			// PID control to align robot with user heading cmd
 			rotateSpeed=Constants.rotateSpeedScale*( headingError * Constants.headingGain  // Proportional Gain
 					- Sensors.getRobotHeadingRate() * Constants.headingVelGain            // Derivative Gain (applied to gyro rate only, therefore "-sign")

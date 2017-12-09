@@ -123,11 +123,13 @@ public class Robot extends IterativeRobot {
         	autonomousCommand.cancel();
         }
         
-		Constants.headingGain=prefs.getDouble("Rotate_KP", 0);
-		Constants.headingIntGain=prefs.getDouble("Rotate_KI", 0);
-		Constants.headingVelGain=prefs.getDouble("Rotate_KD", 0);
-		Constants.headingFdFwdBias=prefs.getDouble("Rotate_FF", 0);
-		Constants.moveSpeedScale=prefs.getDouble("Move Scale", 1);
+		Constants.headingGain=prefs.getDouble("Rotate_KP", Constants.headingGain);
+		Constants.headingIntGain=prefs.getDouble("Rotate_KI", Constants.headingIntGain);
+		Constants.headingVelGain=prefs.getDouble("Rotate_KD", Constants.headingVelGain);
+		Constants.headingFdFwdBias=prefs.getDouble("Rotate_FF",Constants.headingFdFwdBias);
+		Constants.moveSpeedScale=prefs.getDouble("Move Scale", Constants.moveSpeedScale);
+		Constants.maxRotateSpeed=prefs.getDouble("Max Rot Speed", Constants.maxRotateSpeed);
+		Constants.rotateAlpha=.02*6.28*prefs.getDouble("Rotate Freq",Constants.rotateAlpha);
 
 
     }
