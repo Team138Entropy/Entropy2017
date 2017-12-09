@@ -106,8 +106,8 @@ public final class OI {
 		// Coeff for cubic polynomial map btwn joystick and magnitude
 		double A=.3;
 		double B=.25;
-		double C=.9259;
-		double D=-.3772;
+		double C=-.1852;
+		double D=-.85734;
 		double z;
 
 		y=-driverStick.getRawAxis(5); // Inverted Y axis so "fwd" = +90 degrees
