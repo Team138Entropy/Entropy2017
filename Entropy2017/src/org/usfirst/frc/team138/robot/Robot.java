@@ -129,7 +129,9 @@ public class Robot extends IterativeRobot {
 		Constants.headingFdFwdBias=prefs.getDouble("Rotate_FF",Constants.headingFdFwdBias);
 		Constants.moveSpeedScale=prefs.getDouble("Move Scale", Constants.moveSpeedScale);
 		Constants.maxRotateSpeed=prefs.getDouble("Max Rot Speed", Constants.maxRotateSpeed);
+		Constants.zeroTurnMaxSpeed=prefs.getDouble("Max ZeroTurn Speed", Constants.zeroTurnMaxSpeed);
 		Constants.rotateAlpha=.02*6.28*prefs.getDouble("Rotate Freq",Constants.rotateAlpha);
+		Constants.zeroTurnGainFactor=prefs.getDouble("ZeroTurn Factor", Constants.zeroTurnGainFactor);
 
 
     }

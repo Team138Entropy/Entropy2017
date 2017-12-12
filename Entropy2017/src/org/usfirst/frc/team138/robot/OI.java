@@ -29,7 +29,8 @@ public final class OI {
     static Button driverAutoGearButton 		= new JoystickButton(driverStick, 8); // was 4
     
  //   static Button Align_0Deg					= new JoystickButton(driverStick,2);
-    
+    static double lastX=0;
+    static double LastY=0;
     
     public OI(){
     	toggleGearRamButton.whileHeld(new PushGear());
@@ -127,8 +128,12 @@ public final class OI {
 				Magnitude = Magnitude/Math.abs(Magnitude);
 		}
 		result[0]=Magnitude;
+		
+		// Filter joystick coordinates using simple exponential filter
+		lastX=Constants.rotateAlpha*x + (1-Constants.rotateAlpha)*lastX;
+		LastY=Constants.rotateAlpha*y + (1-Constants.rotateAlpha)*LastY;
 		// Direction, in degrees, in range +/- 180
-		Direction=180/Math.PI*Math.atan2(y, x);
+		Direction=180/Math.PI*Math.atan2(LastY, lastX);
 		// Joystick "0" degrees is to the "right", so that
 		// angles are reported in conventional Cartesian coordinate system
 		// with +X to the right and +Y is ahead (forward relative to operator).

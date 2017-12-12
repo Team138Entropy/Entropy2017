@@ -23,7 +23,6 @@ public class Drivetrain extends Subsystem{
 	
 	// Integral heading error (used in Field Coordinates)
 	private static double cumHeadingError=0;
-	private static double lastHeading=0;
 	
 	
 	protected void initDefaultCommand() {		
@@ -49,7 +48,7 @@ public class Drivetrain extends Subsystem{
 	}
 	
 	public void driveWithFieldCoord() {
-		// use arcadeDrive to drive with Field Coordinates
+		// Drive with Field Coordinates
 		double [] userCmd=OI.getFieldCommand();
 		double headingError=0;
 		double rotateSpeed=0;
@@ -57,48 +56,56 @@ public class Drivetrain extends Subsystem{
 		double leftSpeed=0;
 		double rightSpeed=0;
 		double totalSpeed=0;
+		double gainFactor;
+		double maxRotateSpeed;
 		
+		// userCmd[0] is joystick magnitude, range (0->1)
+		// userCmd[1] is joystick direction, wrapped to +/-180 Deg range
 		if (userCmd[0]>Constants.joystickDeadband)
 		{ // Nothing to do if magnitude is within deadband of 0,
 			// if Magnitude > deadBand, a move is required
-			lastHeading=Constants.rotateAlpha*userCmd[1] + (1-Constants.rotateAlpha)*lastHeading;
-			lastHeading=Utility.angleWrap(lastHeading);
-			headingError = Utility.diffAngles(lastHeading, Sensors.getRobotHeading());
-			cumHeadingError+=Constants.Ts * headingError;
+			
+			// Unwrap heading error: difference between two signals each of which is wrapped
+			// to +/- 180 Deg range
+			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
 
 			if (OI.isZeroTurn())
 			{ // Do zero turn
-				// We always rotate to align robot heading with joystick when zero turn button
-				// is depressed
+				// We always rotate to align robot heading with joystick heading when zero turn button
+				// is depressed; force move speed to zero for a "zero" turn
 				moveSpeed=0;
+				gainFactor=Constants.zeroTurnGainFactor;
+				maxRotateSpeed=Constants.zeroTurnMaxSpeed;
+				
 			}
 			else			
 			{ // Move (and possibly rotate to align heading)
+				gainFactor=1.0; // normal gains for normal moves
+				maxRotateSpeed=Constants.maxRotateSpeed; 
 				if (!OI.isReverse())
-				{ // Align robot front with cmd heading
+				{ // Align robot front with cmd heading if the "Reverse" button is NOT pressed
 					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
 				}
 				else
 				{ // Align rear of robot with cmd heading:
-					// Woops - need to "remove" the increment to cumHeadingError added above
-					cumHeadingError -= Constants.Ts * headingError;
 					// Add 180 to current heading, wrap to range of +/-180
 					// then unwrap difference with command direction to result in headingError
 					headingError = Utility.diffAngles(userCmd[1], Utility.angleWrap(Sensors.getRobotHeading()+180));
-					// Now update cumHeadingError with corrected headingError
-					cumHeadingError+=Constants.Ts * headingError;
 					// userCmd[0] is magnitude of speed, 
 					// since we're moving backwards (relative to robot), need to invert
 					// sign of moveSpeed to command wheels in reverse.
 					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
 				}
 			}
-
+			// Integral of headingError (used when headingIntGain is non-zero (Integral control)
+			cumHeadingError+=Constants.Ts * headingError;
 			// PID control to align robot with user heading cmd
-			rotateSpeed=Constants.rotateSpeedScale*( headingError * Constants.headingGain  // Proportional Gain
+			rotateSpeed=gainFactor*( headingError * Constants.headingGain  // Proportional Gain
 					- Sensors.getRobotHeadingRate() * Constants.headingVelGain            // Derivative Gain (applied to gyro rate only, therefore "-sign")
 					+ cumHeadingError * Constants.headingIntGain);                         // Integral Gain
-			rotateSpeed=limitValue(rotateSpeed, -Constants.maxRotateSpeed, Constants.maxRotateSpeed);			
+			
+			// Constrain rotateSpeed to range of +/- maxRotateSpeed
+			rotateSpeed=limitValue(rotateSpeed, -maxRotateSpeed, maxRotateSpeed);			
 			
 			// Tank Drive permits independent control over left and right wheel speeds
 			// This is required to be able to command ZeroTurn moves.
@@ -108,10 +115,11 @@ public class Drivetrain extends Subsystem{
 			totalSpeed=Math.sqrt(leftSpeed*leftSpeed + rightSpeed*rightSpeed);
 			if (totalSpeed>1)
 			{
+				// Scale magnitude while preserving direction
 				leftSpeed=leftSpeed/totalSpeed;
 				rightSpeed=rightSpeed/totalSpeed;
 			}
-			// Apply Bias to overcome stiction, but only if speed > minSpede
+			// Apply Bias to overcome stiction, but only if speed > minSpeed
 			if (leftSpeed > Constants.headingMinBiasSpeed)
 				leftSpeed += Constants.headingFdFwdBias;
 			if (leftSpeed < -Constants.headingMinBiasSpeed)

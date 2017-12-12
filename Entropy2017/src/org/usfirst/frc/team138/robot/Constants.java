@@ -72,8 +72,6 @@ public class Constants {
 		// moveSpeedScale - moveSpeed sent to arcadeDrive when Magnitude = 1;
 		public static double moveSpeedScale = 0.5; // units?
 		
-		// rotateSpeedScale - rotateSpeed sent to arcadeDrive when Magnitude = 1;
-		public final static double rotateSpeedScale = 1; // units?
 		
 		// rotateFdFwdBias - apply a bias to the left/right motor speed command
 		// based on sign(<speed>).  Do Not apply the bias if the abs(speed)<minSpeed
@@ -89,5 +87,18 @@ public class Constants {
 		//   Ts is sample period (20 mSec for FRC)
 		//   Freq is location of filter pole in Hz
 		public static double rotateAlpha = .02*6.28*1;
+		
+		// Gain Factor that boosts PID gains applied to heading error when Zero Turn button
+		// is pressed.
+		public static double zeroTurnGainFactor = 3.0;
 
+		// rotateMaxSpeed- limit on rotate speed when movespeed is non-zero
+		public final static double rotateMaxSpeed = .1; 
+
+		// Max speed allowed during Zero Turn.   For normal moves (non-zero movespeed), 
+		// the max rotate speed is severely limited to avoid rapid changes in heading.
+		// However, during zero turn, much greater voltage commands are required to overcome
+		// stiction in the drive train.  Therefore, if the zero turn button is pressed,
+		// the limits on rotate speed are increased.
+		public static double zeroTurnMaxSpeed = 1.0;
 }
