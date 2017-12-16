@@ -62,7 +62,7 @@ public final class OI {
 	
 	public static double getRotateSpeed()
 	{ // Re-defined to be left/right of Left Hand joystick
-		return driverStick.getRawAxis(1); // was 4 (Right hand joystick)
+		return driverStick.getRawAxis(0); // was 4 (Right hand joystick)
 	}
 	
 	public static double getClimbSpeed()
@@ -72,32 +72,19 @@ public final class OI {
 	
 	public static boolean useFieldCoord() {
 		/*
-		 * Use driverStick axes 0,1 for motion in Robot coords
-		 * Use driverStick axes 4,5 for Field Coord motion
-		 * Compare magnitude of both joysticks to determine
-		 * which coordinate system operator is commanding.
-		 * Normally, the operator will only use one or the other
-		 * joystick.  However, in case both are off-center, 
-		 * select commands from the one with greater magnitude.
-		 * In the case of a "tie", preference given to Robot Coordinates.
-		 * */
-		double x,y;
-		double RC;
-		double [] FC;
-		
-		x=getMoveSpeed();
-		y=getRotateSpeed();
-		RC=x*x+y*y;
-		//
-		FC=getFieldCommand();
-		if (RC>=FC[0])
+		 *  For operation with EXTREME 3D PRO joystick
+		 * Field coordinates is assumed by default.  
+		 * However, if operator depresses button 11, then joystick
+		 *  axes are interpreted in Robot coordinates 
+		 */
+		if (driverStick.getRawButton(11))
 			return false;
 		else
 			return true;
 	}
 	
 	public static boolean isReverse() {
-		return driverStick.getRawButton(5);
+		return driverStick.getRawButton(2);
 	}
 	
 	public static double [] getFieldCommand()
@@ -105,14 +92,22 @@ public final class OI {
 		double Magnitude, Direction, x, y;
 		double [] result = new double[2];
 		// Coeff for cubic polynomial map btwn joystick and magnitude
+		/*
 		double A=.3;
 		double B=.25;
 		double C=-.1852;
 		double D=-.85734;
+		*/
+		// Linear, with offset
+		double A=.1;
+		double B=1;
+		double C=0;
+		double D=0;
+		
 		double z;
 
-		y=-driverStick.getRawAxis(5); // Inverted Y axis so "fwd" = +90 degrees
-		x=driverStick.getRawAxis(4);
+		y=-driverStick.getRawAxis(1); // Inverted Y axis so "fwd" = +90 degrees
+		x=driverStick.getRawAxis(0);
 		Magnitude=Math.sqrt(x*x+y*y);
 		// Apply deadband to avoid "creep" when joystick
 		// does not return "0" at center position.
@@ -124,9 +119,15 @@ public final class OI {
 			z=Magnitude-Constants.joystickDeadband;		
 			Magnitude=A+B*z+C*z*z+D*z*z*z;		
 			// Normalize to maximum of +/-1
-			if (Math.abs(Magnitude)>1)
-				Magnitude = Magnitude/Math.abs(Magnitude);
+			//if (Math.abs(Magnitude)>1)
+			//	Magnitude = Magnitude/Math.abs(Magnitude);
 		}
+		// Implement "High Gear".  Normally, robot speed is limited to 
+		// only 25% of max.  However, when the "fast" button is pressed
+		// then full speed is allowed.
+		if (!driverStick.getRawButton(1))
+			Magnitude=.25*Magnitude;
+		
 		result[0]=Magnitude;
 		
 		// Filter joystick coordinates using simple exponential filter
@@ -149,23 +150,29 @@ public final class OI {
 
 	public static boolean isZeroTurn()
 	{
+		boolean zt;
 		// Execute a zero-turn (rotate about robot center) if zero-turn button is pressed
-		return driverStick.getRawButton(6);
+		zt=driverStick.getRawButton(3) | driverStick.getRawButton(4);
+		return zt;
 	}
 	
 	public static int isNullBias()
 	{ // reset gyro Bias to ordinal directions based 
-		// on which button (1-4) on driver joystick is pressed
-		// buttons are labeled "A" "B" "X" "Y"
-		// return -1 if no button pressed
+		float x=driverStick.getPOV();
+		// on POV button
 		// return: 0=0Deg, 1=90, 2=-90; 3=180; -1=none
-		if (driverStick.getRawButton(2)) //  "B" = 0 Degree
+		if (x<0)
+			return -1;
+		// Map POV coordinates to Field Coordinate directions
+		// Invert sign and apply offset
+		x=90-x; 
+		if (x > -45 & x < 45) //  "B" = 0 Degree
 			return 0;
-		if (driverStick.getRawButton(4)) // "Y" = 90 Degree
+		if (x > 45 & x < 135) // "Y" = 90 Degree
 			return 1;
-		if (driverStick.getRawButton(1)) // "A" = -90 Degree
+		if ( x > -135 & x < -45) // "A" = -90 Degree
 			return 2;
-		if (driverStick.getRawButton(3)) // "X" = +/-180 Degree
+		if (x > -225 & x < -135) // "X" = +/-180 Degree
 			return 3;
 		return -1;
 	}

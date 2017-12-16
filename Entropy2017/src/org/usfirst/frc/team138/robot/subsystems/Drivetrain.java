@@ -17,26 +17,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain extends Subsystem{
 	private static double CONTROLLER_DEAD_ZONE = 0.09;
-	
+
 
 	RobotDrive drivetrain;
-	
+
 	// Integral heading error (used in Field Coordinates)
 	private static double cumHeadingError=0;
-	
-	
+
+
 	protected void initDefaultCommand() {		
 		CANTalon frontLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_FRONT);
 		CANTalon backLeftTalon = new CANTalon(RobotMap.LEFT_MOTOR_CHANNEL_BACK);
 		CANTalon frontRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_FRONT);
 		CANTalon backRightTalon = new CANTalon(RobotMap.RIGHT_MOTOR_CHANNEL_BACK);
-				
+
 		drivetrain = new RobotDrive(frontLeftTalon, backLeftTalon,
 				frontRightTalon, backRightTalon);
-		
+
 		setDefaultCommand(new TeleopDrive());
 	}
-	
+
 	public void drive(double moveSpeed, double rotateSpeed)
 	{
 		drivetrain.arcadeDrive(moveSpeed, rotateSpeed);
@@ -46,7 +46,7 @@ public class Drivetrain extends Subsystem{
 	{
 		drivetrain.tankDrive(leftSpeed, rightSpeed);
 	}
-	
+
 	public void driveWithFieldCoord() {
 		// Drive with Field Coordinates
 		double [] userCmd=OI.getFieldCommand();
@@ -58,13 +58,11 @@ public class Drivetrain extends Subsystem{
 		double totalSpeed=0;
 		double gainFactor;
 		double maxRotateSpeed;
-		
+
 		// userCmd[0] is joystick magnitude, range (0->1)
 		// userCmd[1] is joystick direction, wrapped to +/-180 Deg range
-		if (userCmd[0]>Constants.joystickDeadband)
-		{ // Nothing to do if magnitude is within deadband of 0,
-			// if Magnitude > deadBand, a move is required
-			
+		if (userCmd[0]>0)
+		{
 			// Unwrap heading error: difference between two signals each of which is wrapped
 			// to +/- 180 Deg range
 			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
@@ -76,7 +74,7 @@ public class Drivetrain extends Subsystem{
 				moveSpeed=0;
 				gainFactor=Constants.zeroTurnGainFactor;
 				maxRotateSpeed=Constants.zeroTurnMaxSpeed;
-				
+
 			}
 			else			
 			{ // Move (and possibly rotate to align heading)
@@ -103,10 +101,10 @@ public class Drivetrain extends Subsystem{
 			rotateSpeed=gainFactor*( headingError * Constants.headingGain  // Proportional Gain
 					- Sensors.getRobotHeadingRate() * Constants.headingVelGain            // Derivative Gain (applied to gyro rate only, therefore "-sign")
 					+ cumHeadingError * Constants.headingIntGain);                         // Integral Gain
-			
+
 			// Constrain rotateSpeed to range of +/- maxRotateSpeed
 			rotateSpeed=limitValue(rotateSpeed, -maxRotateSpeed, maxRotateSpeed);			
-			
+
 			// Tank Drive permits independent control over left and right wheel speeds
 			// This is required to be able to command ZeroTurn moves.
 			leftSpeed=moveSpeed-rotateSpeed;
@@ -128,14 +126,14 @@ public class Drivetrain extends Subsystem{
 				rightSpeed += Constants.headingFdFwdBias;
 			if (rightSpeed < -Constants.headingMinBiasSpeed)
 				rightSpeed -= Constants.headingFdFwdBias;
-		
+
 			drivetrain.tankDrive(leftSpeed, rightSpeed);
 			SmartDashboard.putNumber("Heading Error:", headingError);
 		}
 		SmartDashboard.putNumber("Left Speed:", leftSpeed);
 		SmartDashboard.putNumber("Right Speed:", rightSpeed);
 	}
-		
+
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
 	{
 		cumHeadingError=0; // Zero cumulative heading error when not using Field Coord
@@ -143,14 +141,14 @@ public class Drivetrain extends Subsystem{
 		// Filter input speeds
 		moveSpeed = applyDeadZone(moveSpeed);
 		rotateSpeed = applyDeadZone(rotateSpeed);
-				
+
 		// Motor Speeds on both the left and right sides
 		double leftMotorSpeed  = getLeftMotorSpeed(moveSpeed, rotateSpeed);
 		double rightMotorSpeed = getRightMotorSpeed(moveSpeed, rotateSpeed);
-		
+
 		drivetrain.setLeftRightMotorOutputs(leftMotorSpeed, rightMotorSpeed);
 	}
-	
+
 	double getLeftMotorSpeed(double moveSpeed, double rotateSpeed)
 	{
 		int[] indices = {16, 16};
@@ -159,7 +157,7 @@ public class Drivetrain extends Subsystem{
 
 		return DriveTable.Drive_Matrix_2017[indices[1]][indices[0]];
 	}
-	
+
 	double getRightMotorSpeed(double moveSpeed, double rotateSpeed)
 	{
 		int[] indices = {16, 16};
@@ -169,7 +167,7 @@ public class Drivetrain extends Subsystem{
 
 		return DriveTable.Drive_Matrix_2017[indices[1]][indices[0]];
 	}
-	
+
 	int[] getIndex(double moveSpeed, double rotateSpeed)
 	{		
 		double diff1 = 0;
@@ -208,7 +206,7 @@ public class Drivetrain extends Subsystem{
 				break;
 			}
 		}
-		
+
 		arrayPtr = DriveTable.Drive_Lookup_Y;
 		arrayLength = DriveTable.Drive_Lookup_Y.length;
 		double moveValue = limitValue(moveSpeed, arrayPtr[0], arrayPtr[arrayLength - 1]);
@@ -239,16 +237,16 @@ public class Drivetrain extends Subsystem{
 				break;
 			}
 		}
-		
+
 		return returnIndex;
 	}
-	
+
 	boolean inRange(double testValue, double bound1, double bound2) 
 	{  
 		return (((bound1 <= testValue) && (testValue <= bound2)) ||
 				((bound1 >= testValue) && (testValue >= bound2)));
 	}
-	
+
 	double limitValue(double testValue, double lowerBound, double upperBound)
 	{
 		if(testValue > upperBound)
@@ -264,11 +262,11 @@ public class Drivetrain extends Subsystem{
 			return testValue;
 		}
 	}
-	
+
 	double applyDeadZone(double speed)
 	{
 		double finalSpeed;
-		
+
 		if ( Math.abs(speed) < CONTROLLER_DEAD_ZONE) {
 			finalSpeed = 0;
 		}
@@ -277,9 +275,9 @@ public class Drivetrain extends Subsystem{
 		}
 		return finalSpeed;
 	}
-	
 
 
-	
-	
+
+
+
 }

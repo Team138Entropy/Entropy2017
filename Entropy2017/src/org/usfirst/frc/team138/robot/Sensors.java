@@ -5,6 +5,7 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 //import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Sensors {
 	public static ADXRS450_Gyro gyro; 
 	
+    static Joystick driverStick = new Joystick(0);
 	
 	static Encoder leftEncoder;
 	static Encoder rightEncoder;
@@ -159,5 +161,8 @@ public class Sensors {
 		SmartDashboard.putNumber("Gyro Bias:", gyroBias);
 		SmartDashboard.putNumber("Robot Heading:", getRobotHeading());
 		SmartDashboard.putNumber("Rotation Rate:", getRobotHeadingRate());
+		
+		// 
+		SmartDashboard.putNumber("POV", OI.isNullBias());
 	}
 }
