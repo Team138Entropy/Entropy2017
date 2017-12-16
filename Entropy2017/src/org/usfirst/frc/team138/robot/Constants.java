@@ -69,8 +69,10 @@ public class Constants {
 		// Otherwise, turn to align front of robot with cmd heading
 		public final static double turnRange = 95; // Degrees
 		
-		// moveSpeedScale - moveSpeed sent to arcadeDrive when Magnitude = 1;
-		public static double moveSpeedScale = 0.5; // units?
+		// When driving in Field Coordinates,  the normal move speed (not rotate speed)
+		// is restricted to +/-maxSlowMoveSpeed.  However, if the "high speed" button
+		// is pressed, the restriction on moveSpeed is lifted (max is now full speed)
+		public static double maxSlowMoveSpeed = 0.5; // 
 		
 		
 		// rotateFdFwdBias - apply a bias to the left/right motor speed command
@@ -102,7 +104,14 @@ public class Constants {
 		// the limits on rotate speed are increased.
 		public static double zeroTurnMaxSpeed = 1.0;
 		
+		// Normally, driveWithFieldCoord will try to align robot heading with the joystick direction.
+		// However, if the headingError is large than revRange, the rear of the robot will be aligned
+		// with the joystick direction (ie: move in reverse).
 		public static double revRange = 135;
 		
-		public static double rerHyst = 125;
+		// Hysteresis is included in the reverse logic.  If the headingError is close to the fwd/rev
+		// threshold, we add hysteresis to avoid chatter.  If the robot was moving forward and the 
+		// headingErrof exceeds revRange, then the robot will start moving in reverse and the threshold
+		// between fwd/rev is changed to revHyst.  revHyst should always be less than revRange.
+		public static double revHyst = 125;
 }

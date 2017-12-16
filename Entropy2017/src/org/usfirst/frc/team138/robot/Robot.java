@@ -121,19 +121,13 @@ public class Robot extends IterativeRobot {
     	mode = "teleop";
         if (autonomousCommand != null) {
         	autonomousCommand.cancel();
-        }
-        
+        }        
 		Constants.headingGain=prefs.getDouble("Rotate_KP", Constants.headingGain);
-		Constants.headingIntGain=prefs.getDouble("Rotate_KI", Constants.headingIntGain);
-		Constants.headingVelGain=prefs.getDouble("Rotate_KD", Constants.headingVelGain);
 		Constants.headingFdFwdBias=prefs.getDouble("Rotate_FF",Constants.headingFdFwdBias);
-		Constants.moveSpeedScale=prefs.getDouble("Move Scale", Constants.moveSpeedScale);
+		Constants.maxSlowMoveSpeed=prefs.getDouble("Slow MoveSpeed", Constants.maxSlowMoveSpeed);
 		Constants.maxRotateSpeed=prefs.getDouble("Max Rot Speed", Constants.maxRotateSpeed);
 		Constants.zeroTurnMaxSpeed=prefs.getDouble("Max ZeroTurn Speed", Constants.zeroTurnMaxSpeed);
-		Constants.rotateAlpha=.02*6.28*prefs.getDouble("Rotate Freq",Constants.rotateAlpha);
 		Constants.zeroTurnGainFactor=prefs.getDouble("ZeroTurn Factor", Constants.zeroTurnGainFactor);
-
-
     }
 
     /**

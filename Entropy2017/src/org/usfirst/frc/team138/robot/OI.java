@@ -87,6 +87,11 @@ public final class OI {
 		return driverStick.getRawButton(2);
 	}
 	
+	public static boolean isFullSpeed() {
+		return driverStick.getRawButton(1);
+	}
+	
+	
 	public static double [] getFieldCommand()
 	{
 		double Magnitude, Direction, x, y;
@@ -119,14 +124,9 @@ public final class OI {
 			z=Magnitude-Constants.joystickDeadband;		
 			Magnitude=A+B*z+C*z*z+D*z*z*z;		
 			// Normalize to maximum of +/-1
-			//if (Math.abs(Magnitude)>1)
-			//	Magnitude = Magnitude/Math.abs(Magnitude);
+			if (Math.abs(Magnitude)>1)
+				Magnitude = Magnitude/Math.abs(Magnitude);
 		}
-		// Implement "High Gear".  Normally, robot speed is limited to 
-		// only 25% of max.  However, when the "fast" button is pressed
-		// then full speed is allowed.
-		if (!driverStick.getRawButton(1))
-			Magnitude=.25*Magnitude;
 		
 		result[0]=Magnitude;
 		

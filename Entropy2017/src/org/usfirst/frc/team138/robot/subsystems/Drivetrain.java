@@ -58,7 +58,7 @@ public class Drivetrain extends Subsystem{
 		double rightSpeed=0;
 		double totalSpeed=0;
 		double gainFactor;
-		double maxRotateSpeed;
+		double maxRotateSpeed, maxMoveSpeed;
 		double revRange;
 
 		// userCmd[0] is joystick magnitude, range (0->1)
@@ -68,6 +68,13 @@ public class Drivetrain extends Subsystem{
 			// Unwrap heading error: difference between two signals each of which is wrapped
 			// to +/- 180 Deg range
 			headingError = Utility.diffAngles(userCmd[1], Sensors.getRobotHeading());
+			
+			// check "high speed" throttle, adjust top movespeed accordingly
+			if (OI.isFullSpeed())
+				maxMoveSpeed=1;
+			else
+				maxMoveSpeed=Constants.maxSlowMoveSpeed;
+			
 
 			if (OI.isZeroTurn())
 			{ // Do zero turn
@@ -83,15 +90,15 @@ public class Drivetrain extends Subsystem{
 				gainFactor=1.0; // normal gains for normal moves
 				maxRotateSpeed=Constants.maxRotateSpeed;
 				if (revFlag){
-					revRange = Constants.rerHyst;
+					revRange = Constants.revHyst;
 				}
 				else{
 					revRange = Constants.revRange;
 				}
-				if (!OI.isReverse() || Math.abs(headingError)>revRange)
+				if (!OI.isReverse() && Math.abs(headingError)<revRange )
 				{ // Align robot front with cmd heading if the "Reverse" button is NOT pressed
-					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
-					revFlag = true;
+					moveSpeed=limitValue(userCmd[0],-maxMoveSpeed,maxMoveSpeed);
+					revFlag = false;
 				}
 				else
 				{ // Align rear of robot with cmd heading:
@@ -101,8 +108,8 @@ public class Drivetrain extends Subsystem{
 					// userCmd[0] is magnitude of speed, 
 					// since we're moving backwards (relative to robot), need to invert
 					// sign of moveSpeed to command wheels in reverse.
-					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
-					revFlag = false;
+					moveSpeed=limitValue(-userCmd[0],-maxMoveSpeed,maxMoveSpeed);
+					revFlag = true;
 				}
 			}
 			// Integral of headingError (used when headingIntGain is non-zero (Integral control)
@@ -142,6 +149,8 @@ public class Drivetrain extends Subsystem{
 		}
 		SmartDashboard.putNumber("Left Speed:", leftSpeed);
 		SmartDashboard.putNumber("Right Speed:", rightSpeed);
+		SmartDashboard.putBoolean("Rev Flag", revFlag);
+		
 	}
 
 	public void driveWithTable(double moveSpeed, double rotateSpeed)
