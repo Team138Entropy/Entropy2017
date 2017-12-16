@@ -101,4 +101,8 @@ public class Constants {
 		// stiction in the drive train.  Therefore, if the zero turn button is pressed,
 		// the limits on rotate speed are increased.
 		public static double zeroTurnMaxSpeed = 1.0;
+		
+		public static double revRange = 135;
+		
+		public static double rerHyst = 125;
 }

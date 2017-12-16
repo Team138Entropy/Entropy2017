@@ -23,6 +23,7 @@ public class Drivetrain extends Subsystem{
 
 	// Integral heading error (used in Field Coordinates)
 	private static double cumHeadingError=0;
+	private static boolean revFlag = false;
 
 
 	protected void initDefaultCommand() {		
@@ -58,6 +59,7 @@ public class Drivetrain extends Subsystem{
 		double totalSpeed=0;
 		double gainFactor;
 		double maxRotateSpeed;
+		double revRange;
 
 		// userCmd[0] is joystick magnitude, range (0->1)
 		// userCmd[1] is joystick direction, wrapped to +/-180 Deg range
@@ -79,10 +81,17 @@ public class Drivetrain extends Subsystem{
 			else			
 			{ // Move (and possibly rotate to align heading)
 				gainFactor=1.0; // normal gains for normal moves
-				maxRotateSpeed=Constants.maxRotateSpeed; 
-				if (!OI.isReverse())
+				maxRotateSpeed=Constants.maxRotateSpeed;
+				if (revFlag){
+					revRange = Constants.rerHyst;
+				}
+				else{
+					revRange = Constants.revRange;
+				}
+				if (!OI.isReverse() || Math.abs(headingError)>revRange)
 				{ // Align robot front with cmd heading if the "Reverse" button is NOT pressed
 					moveSpeed=userCmd[0] * Constants.moveSpeedScale;
+					revFlag = true;
 				}
 				else
 				{ // Align rear of robot with cmd heading:
@@ -93,6 +102,7 @@ public class Drivetrain extends Subsystem{
 					// since we're moving backwards (relative to robot), need to invert
 					// sign of moveSpeed to command wheels in reverse.
 					moveSpeed=-userCmd[0] * Constants.moveSpeedScale;
+					revFlag = false;
 				}
 			}
 			// Integral of headingError (used when headingIntGain is non-zero (Integral control)
