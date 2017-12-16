@@ -107,8 +107,8 @@ public class Drivetrain extends Subsystem{
 
 			// Tank Drive permits independent control over left and right wheel speeds
 			// This is required to be able to command ZeroTurn moves.
-			leftSpeed=moveSpeed-rotateSpeed;
-			rightSpeed=moveSpeed+rotateSpeed;
+			leftSpeed=moveSpeed+rotateSpeed;
+			rightSpeed=moveSpeed-rotateSpeed;
 			// Constrain vector magnitude of wheel speeds to range of +/- 1.0;
 			totalSpeed=Math.sqrt(leftSpeed*leftSpeed + rightSpeed*rightSpeed);
 			if (totalSpeed>1)
@@ -127,7 +127,7 @@ public class Drivetrain extends Subsystem{
 			if (rightSpeed < -Constants.headingMinBiasSpeed)
 				rightSpeed -= Constants.headingFdFwdBias;
 
-			drivetrain.tankDrive(leftSpeed, rightSpeed);
+			drivetrain.tankDrive(-leftSpeed, -rightSpeed);
 			SmartDashboard.putNumber("Heading Error:", headingError);
 		}
 		SmartDashboard.putNumber("Left Speed:", leftSpeed);
