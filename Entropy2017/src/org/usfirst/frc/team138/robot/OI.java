@@ -101,13 +101,13 @@ public final class OI {
 		double A=.3;
 		double B=.25;
 		double C=-.1852;
-		double D=-.85734;
-		*/
-		// Linear, with offset
+		double D=.85734;*/
+			// Linear, with offset
 		double A=.1;
 		double B=1;
 		double C=0;
 		double D=0;
+		
 		
 		double z;
 

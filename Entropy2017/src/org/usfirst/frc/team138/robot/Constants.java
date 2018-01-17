@@ -58,7 +58,7 @@ public class Constants {
 
 		// Integral Gain applied to heading error
 		// commands rotateSpeed = headingGain * headingError - RotationRate * headingVelGain + cumHeadingError * headingIntGain
-		public static double headingIntGain = 0.03; // 
+		public static double headingIntGain = 0.0; // 
 
 		// Limit max rotate speed
 		public static double maxRotateSpeed = .5; // 
@@ -107,7 +107,7 @@ public class Constants {
 		// Normally, driveWithFieldCoord will try to align robot heading with the joystick direction.
 		// However, if the headingError is large than revRange, the rear of the robot will be aligned
 		// with the joystick direction (ie: move in reverse).
-		public static double revRange = 135;
+		public static double revRange = 200;
 		
 		// Hysteresis is included in the reverse logic.  If the headingError is close to the fwd/rev
 		// threshold, we add hysteresis to avoid chatter.  If the robot was moving forward and the 
