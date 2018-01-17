@@ -3,6 +3,7 @@ package org.usfirst.frc.team138.robot.subsystems;
 import org.usfirst.frc.team138.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -14,6 +15,7 @@ public class Claw extends Subsystem{
 	Solenoid wristSolenoid = new Solenoid(RobotMap.GEAR_WRIST_PORT);
 	Solenoid chuteGuardSolenoid = new Solenoid(RobotMap.GEAR_CHUTE_GUARD_PORT);
 	Solenoid ramSolenoid = new Solenoid(RobotMap.GEAR_RAM_PORT);
+	Jaguar j = new Jaguar(4);
 	
 	boolean clawIsOpen = false;
 	boolean wristIsUp = true;
@@ -32,7 +34,18 @@ public class Claw extends Subsystem{
 	{
 		compressor.start();
 	}
-	
+	public void slickNick()
+	{
+		j.set(.5);
+	}
+	public void slickNick2()
+	{
+		j.set(-.5);
+	}
+	public void slickNick3()
+	{
+		j.set(0);
+	}
 	public void extendRam(){
 		ramSolenoid.set(true);
 		ramExtended = true;

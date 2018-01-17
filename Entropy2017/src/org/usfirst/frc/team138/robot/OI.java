@@ -33,12 +33,18 @@ public final class OI {
     static double LastY=0;
     
     public OI(){
-    	toggleGearRamButton.whileHeld(new PushGear());
+    	//THIS IS NICKS STUFF
+    	toggleGearRamButton.whileHeld(new Brendan());
+    	toggleRopeGrabberButton.whileHeld(new Brendan2());
+    	toggleGearRamButton.whenReleased(new Brendan3());
+    	toggleRopeGrabberButton.whenReleased(new Brendan3());
+    	
+    	
     	chuteAcquireButton.whenPressed(new ChuteAcquire());
     	//floorAcquireButton.whenPressed(new FloorAcquire());
     	toggleWristButton.whenPressed(new SetWristPosition());
     	toggleClawButton.whenPressed(new SetClawPosition());
-    	toggleRopeGrabberButton.whenPressed(new GraspRope());
+    	//toggleRopeGrabberButton.whenPressed(new GraspRope());
     	//autoPositionShooterButton.whenPressed(new VisionCorrect(false, 4));
     	//autoGearPlaceButton.whenPressed(new VisionCorrect2Step(4));
     	driverAutoGearButton.whenPressed(new VisionCorrect(true, 4));
